@@ -20,7 +20,7 @@ new_token=token.confirm_token()
 # Define the routes for the Flask app
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'message': 'Welcome to Glidee API. Click <a href="/about">This Documentation</a> to learn more about the Routes end points.'}), 201
+    return jsonify({'message': 'Welcome to Glidee API. Click <a href="/https://github.com/glidee-app/glidee-backend/blob/main/Documentation.md">This Documentation</a> to learn more about the Routes end points.'}), 201
 
 @app.route('/signup/<username>/<email>/<password>/<confirm_password>', methods=['GET', 'POST'])
 def signup(username, email, password, confirm_password):
