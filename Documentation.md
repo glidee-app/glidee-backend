@@ -9,7 +9,7 @@ This is a `RESTful API` that allows a mobile application to interact with a data
 - GET '/'
     This endpoint provides a welcome message to the user.
 
-    Response: JSON object with the message Welcome to Glidee API. Click <a href="/https://github.com/glidee-app/glidee-backend/blob/main/Documentation.md">This Documentation</a> to learn more about the Routes end points.
+    Response: JSON object with the message Welcome to Glidee API. Click <a href="https://github.com/glidee-app/glidee-backend/blob/main/Documentation.md">This Documentation</a> to learn more about the Routes end points.
 
 - GET/POST `/signup/<username>/<email>/<password>/<confirm_password>`
     This endpoint allows users to register with the application by providing their username, email, and password.
