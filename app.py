@@ -1,8 +1,8 @@
 from flask import request, jsonify, abort
 from models import db, User, TokenBlacklist
-from verification.email_verification import EmailAuthentication
+from validation.email_validation import EmailValidation
 from send_token import Token
-from flask import Flask
+from flask import Flask, redirect
 
 
 
@@ -20,18 +20,18 @@ new_token=token.confirm_token()
 # Define the routes for the Flask app
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'message': 'Welcome', 'authentication_endpoints': {"signup": '/signup/<username>/<email>/<password>/<confirm_password>', "signin": '/signin/<username_or_email>/<password>', }}), 201
+    return jsonify({'message': 'Welcome to Glidee API. Click <a href="/about">This Documentation</a> to learn more about the Routes end points.'}), 201
 
 @app.route('/signup/<username>/<email>/<password>/<confirm_password>', methods=['GET', 'POST'])
 def signup(username, email, password, confirm_password):
     db.create_all()
 
-    email_authentication=EmailAuthentication(username=username, email=email)
+    email_validation=EmailValidation(username=username, email=email)
 
     if not username or not email or not password or not confirm_password:
         return jsonify({'message': 'Please enter all required information.'}), 400
 
-    if not email_authentication.validate_email_payload():
+    if not email_validation.validate_email_payload():
         return jsonify({'message': 'Please enter a valid username and email'}), 400
 
 
@@ -82,8 +82,8 @@ def forgot_password(email):
 
     return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
-@app.route('/reset_password/<email>/<token>/<new_password>', methods=['GET', 'POST'])
-def reset_password(email, token, new_password):
+@app.route('/reset_password/<email>/<token>/<new_password>/<confirm_password>', methods=['GET', 'POST'])
+def reset_password(email, token, new_password, confirm_password):
     if not email:
         return jsonify({'message': 'Please enter your email.'}), 400
 
@@ -102,6 +102,10 @@ def reset_password(email, token, new_password):
 
     if not new_password:
         return jsonify({'message': 'Please enter your new password.'}), 400
+
+    if new_password != confirm_password:
+        return jsonify({'message': 'The passwords you entered do not match. Please make sure that both passwords are the same.'}), 400
+
 
     user.set_password(new_password)
     db.session.commit()

@@ -1,6 +1,6 @@
 from typing import Tuple, Dict
 
-class EmailAuthentication():
+class EmailValidation():
     
     def __init__(self, username: str, email: str) -> None:
         self.username=username
