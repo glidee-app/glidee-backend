@@ -2,7 +2,7 @@ from flask import request, jsonify, abort
 from models import db, User, TokenBlacklist
 from validation.email_validation import EmailValidation
 from send_token import Token
-from flask import Flask, redirect
+from flask import Flask, redirect, render_template
 
 
 
@@ -20,7 +20,7 @@ new_token=token.confirm_token()
 # Define the routes for the Flask app
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'message': 'Welcome to Glidee API. Click <a href="https://github.com/glidee-app/glidee-backend/blob/main/Documentation.md">This Documentation</a> to learn more about the Routes end points.'}), 201
+    return render_template("index.html")
 
 @app.route('/signup/<username>/<email>/<password>/<confirm_password>', methods=['GET', 'POST'])
 def signup(username, email, password, confirm_password):
