@@ -47,14 +47,15 @@ This is a `RESTful API` that allows a mobile application to interact with a data
     If successful, JSON object with the message "An email containing instructions to reset your password has been sent." and HTTP status code 200 (OK)
     If unsuccessful, JSON object with an error message and HTTP status code 401 (Unauthorized)
 
-- GET/POST `/change_password/<email>/<old_password>/<new_password>`
-    This endpoint allows users to change their password by providing their email, old password, and new password.
+- GET/POST `/reset_password/<token>/<new_password>/<confirm_password>`
+    This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.
 
     Request Parameters:
 
     email: string
-    old_password: string
+    token: string
     new_password: string
+    confrim_password: string
     Response:
 
     If successful, JSON object with the message "Password successfully changed." and HTTP status code 200 (OK)
