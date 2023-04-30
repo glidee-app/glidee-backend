@@ -1,3 +1,2 @@
-# Glidee Backend
-
-Welcome to Glidee backend
+# Glidee-Backend
+This is the Codebase for Glidee Backend
