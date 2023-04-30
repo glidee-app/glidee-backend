@@ -1,16 +1,15 @@
-from flask import request, jsonify
 from database import Database
 from models import User
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
+from flask_swagger import swagger
+from flask_cors import CORS
 from webargs.flaskparser import use_args
 from webargs import fields
 from sqlalchemy.exc import IntegrityError
-from dotenv import load_dotenv
-from flask_swagger import swagger
 
 
 app = Flask(__name__)
-load_dotenv()
+CORS(app, origins=['http://localhost:3000, http://localhost'])
 
 db = Database()
 db.migrate()
