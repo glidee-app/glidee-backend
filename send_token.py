@@ -1,9 +1,10 @@
 import smtplib
 from token_generator import TokenGenerator
+import os
 
 # login to the email server
 my_email = "ezekieloluwadamy@gmail.com"
-password = "SECRET KEY"
+password = os.environ.get("secret_key")
 
 tokenize=TokenGenerator()
 my_token=tokenize.generate_token()
