@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:5000, http://localhost'])
+CORS(app, origins=['http://localhost:3000'])
 
 db = Database()
 db.migrate()
