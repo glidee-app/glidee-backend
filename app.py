@@ -186,9 +186,17 @@ def create_order():
 
 @app.route('/orders/<int:vehicle_id>', methods=['POST'])
 
-def create_order_with_vehicle(vehicle_id):
-    # Get data from the client-side request
+# Get data from the client-side request
+@use_args({
+    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
+    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
+    'comfortability': fields.Str(validate=validate.OneOf(['shared', 'standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
+    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
+    'user_email': fields.Str(required=True, error_messages={'required': 'The user_email field is required'}),
+    'amount': fields.Str(validate=validate.OneOf(['3000', '5000', '10000']), required=True, error_messages={'required': 'The amount field is required'})
+}, location='json')
 
+def create_order_with_vehicle(vehicle_id):
 
     # Extract the relevant data from the request
     
