@@ -1,23 +1,23 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from sqlalchemy import Integer, Column, String, DateTime
-from sqlalchemy.orm import declarative_base
+from flask_sqlalchemy import SQLAlchemy
 import jwt
 
 
-Base = declarative_base()
+db = SQLAlchemy()
 
 
-class User(Base):
+class User(db.Model):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    first_name = Column(String(50), nullable=False)
-    last_name = Column(String(50), nullable=False)
-    email = Column(String(120), unique=True, nullable=False)
-    password_hash = Column(String(128), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    orders = db.relationship('Order', backref='user', lazy=True)
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -52,20 +52,33 @@ class User(Base):
         except jwt.InvalidTokenError:
             raise Exception('Invalid token. Please log in again.')
 
-    # Not used for now
+class Driver(db.Model):
+    __tablename__ = "drivers"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    phone_number = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    available = db.Column(db.Boolean, nullable=False)
+    vehicles = db.relationship('Vehicle', backref='driver', lazy=True)
 
-    # def generate_password_reset_token(email):
-    #     try:
-    #         # Create a payload with the user's ID and a timestamp
-    #         payload = {
-    #             'user_email': email,
-    #             'timestamp': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-    #         }
+class Vehicle(db.Model):
+    __tablename__ = "vehicles"
+    id = db.Column(db.Integer, primary_key=True)
+    make = db.Column(db.String(50), nullable=False)
+    model = db.Column(db.String(50), nullable=False)
+    license_plate = db.Column(db.String(20), nullable=False)
+    comfortability = db.Column(db.String(50), nullable=False)
+    driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=False)
+    orders = db.relationship('Order', backref='vehicle', lazy=True)
 
-    #         # Encode the payload as a JWT token
-    #         token = jwt.encode(payload, algorithm='HS256')
-
-    #         # Return the token as a string
-    #         return token.decode('utf-8')
-    #     except Exception as e:
-    #         return e
+class Order(db.Model):
+    __tablename__ = "orders"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=False)
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'), nullable=False)
+    comfortability=db.Column(db.String(50), db.ForeignKey('vehicles.comfortability', nullable=False))
+    amount = db.Column(db.Integer, nullable=False)
+    pickup_datetime = db.Column(db.DateTime, nullable=False)
+    pickup_location = db.Column(db.String(50), nullable=False)
+    destination = db.Column(db.String(50), nullable=False)

@@ -1,5 +1,5 @@
 from database import Database
-from models import User
+from models import User, Driver, Order, Vehicle
 from flask import Flask, render_template, jsonify
 from flask_swagger import swagger
 from flask_cors import CORS
@@ -132,6 +132,101 @@ def signin(data):
         'message': 'User logged in successfully.',
         'data': {'token': auth_token}
     }), 200
+
+@app.route('/orders', methods=['POST'])
+@use_args({
+    'email': fields.Email(required=True),
+    'password': fields.Str(required=True),
+}, location='json')
+def create_order():
+    # Get data from the client-side request
+    data = request.get_json()
+
+    # Extract the relevant data from the request
+    pickup_location = data['pickup_location']
+    destination = data['destination']
+    comfortability = data['comfortability']
+    pickup_datetime = data['pickup_datetime']
+    user_email = data['name']
+    amount = data['amount']
+
+    # Check if the user exists in the database
+    user = User.query.filter_by(email=user_email).first()
+    if user:
+        user_id = user.id
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
+    # Get a list of all available vehicles that match the user's requested comfortability
+    comfortable_vehicles = Vehicle.query.filter_by(comfortability=comfortability).all()
+
+    if not comfortable_vehicles:
+        return jsonify({'message': 'No available vehicles found for the requested comfortability'}), 404
+
+    # Create a list of dictionaries containing information about each available vehicle
+    available_vehicles = []
+    for vehicle in comfortable_vehicles:
+        vehicle_data = {}
+        vehicle_data['id'] = vehicle.id
+        vehicle_data['make'] = vehicle.make
+        vehicle_data['model'] = vehicle.model
+        vehicle_data['license_plate'] = vehicle.license_plate
+        vehicle_data['driver_id'] = vehicle.driver_id
+
+        available_vehicles.append(vehicle_data)
+
+    # Return the list of available vehicles to the client for them to choose from
+    return jsonify({'available_vehicles': available_vehicles}), 200
+
+@app.route('/orders/<int:vehicle_id>', methods=['POST'])
+def create_order_with_vehicle(vehicle_id):
+    # Get data from the client-side request
+    data = request.get_json()
+
+    # Extract the relevant data from the request
+    
+    pickup_location = data['pickup_location']
+    destination = data['destination']
+    comfortability = data['comfortability']
+    pickup_datetime = data['pickup_datetime']
+    user_email = data['name']
+    amount = data['amount']
+
+
+
+    # Check if the user exists in the database
+    user = User.query.filter_by(email=user_email).first()
+    if user:
+        user_id = user.id
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
+    # Check if the selected vehicle exists and is available
+    selected_vehicle = Vehicle.query.filter_by(id=vehicle_id, comfortability=comfortability).first()
+    if not selected_vehicle:
+        return jsonify({'message': 'Vehicle not found or not available for the requested comfortability'}), 404
+
+
+    # Register the order in the database
+    new_order = Order(user_id=user_id, driver_id=selected_vehicle.driver_id, vehicle_id=selected_vehicle.id,amount=amount, pickup_location=pickup_location, pickup_datetime=pickup_datetime, destination=destination, comfortability=comfortability)
+    db.session.add(new_order)
+    db.session.commit() 
+
+
+@app.route('/bookings/<int:order_id>', methods=['DELETE'])
+def cancel_order(order_id):
+    # Query the database for the booking with the given ID
+    order = Order.query.get(order_id)
+    if not order:
+        return jsonify({'message': 'Order not found'}), 404
+
+    # Delete the booking from the database
+    db.session.delete(order)
+    db.session.commit()
+
+    # Return a success message to the client
+    return jsonify({'message': 'Order cancelled successfully'}), 200
+
 
 
 @app.get('/spec')
