@@ -145,8 +145,7 @@ def signin(data):
     'amount': fields.Str(validate=validate.OneOf(['3000', '5000', '10000']), required=True, error_messages={'required': 'The amount field is required'})
 }, location='json')
 
-def create_order():
-    
+def create_order(data):
 
     # Extract the relevant data from the request
     pickup_location = data['pickup_location']
@@ -184,19 +183,19 @@ def create_order():
     # Return the list of available vehicles to the client for them to choose from
     return jsonify({'available_vehicles': available_vehicles}), 200
 
-@app.route('/orders/<int:vehicle_id>', methods=['POST'])
+@app.route('/create_order_with_vehicle/<int:vehicle_id>', methods=['POST'])
 
 # Get data from the client-side request
 @use_args({
-    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
-    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
-    'comfortability': fields.Str(validate=validate.OneOf(['shared', 'standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
+    'pickup_location': fields.str(required=True, error_messages={'required': 'The pickup_location field is required'}),
+    'destination': fields.str(required=True, error_messages={'required': 'The destination field is required'}),
+    'comfortability': fields.str(validate=validate.OneOf(['shared', 'standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
-    'user_email': fields.Str(required=True, error_messages={'required': 'The user_email field is required'}),
-    'amount': fields.Str(validate=validate.OneOf(['3000', '5000', '10000']), required=True, error_messages={'required': 'The amount field is required'})
-}, location='json')
+    'user_email': fields.str(required=True, error_messages={'required': 'The user_email field is required'}),
+    'amount': fields.str(validate=validate.OneOf(['3000', '5000', '10000']), required=True, error_messages={'required': 'The amount field is required'}),
+    'vehicle_id': fields.str(required=True, error_messages={'required': 'The vehicle_id field is required'})}, location='json')
 
-def create_order_with_vehicle(vehicle_id):
+def create_order_with_vehicle(data):
 
     # Extract the relevant data from the request
     
@@ -206,7 +205,7 @@ def create_order_with_vehicle(vehicle_id):
     pickup_datetime = data['pickup_datetime']
     user_email = data['name']
     amount = data['amount']
-
+    vehicle_id=data['vehicle_id']
 
 
     # Check if the user exists in the database
