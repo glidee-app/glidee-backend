@@ -4,7 +4,7 @@ from flask import Flask, render_template, jsonify
 from flask_swagger import swagger
 from flask_cors import CORS
 from webargs.flaskparser import use_args
-from webargs import fields
+from webargs import fields, validate
 from sqlalchemy.exc import IntegrityError
 
 
