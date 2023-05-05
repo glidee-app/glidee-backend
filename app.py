@@ -1,18 +1,15 @@
-from database import Database
-from models import User, Driver, Order, Vehicle
+from models import User, Driver, Order, Vehicle, db
 from flask import Flask, render_template, jsonify
 from flask_swagger import swagger
-from flask_cors import CORS
-from webargs.flaskparser import use_args
 from webargs import fields, validate
+from webargs.flaskparser import use_args
+from flask_cors import CORS
+
 from sqlalchemy.exc import IntegrityError
 
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
-
-db = Database()
-db.migrate()
 
 
 @app.get('/')

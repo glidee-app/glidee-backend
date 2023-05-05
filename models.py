@@ -77,7 +77,7 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=False)
     vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'), nullable=False)
-    comfortability=db.Column(db.String(50), db.ForeignKey('vehicles.comfortability', nullable=False))
+    comfortability=db.Column(db.String(50), db.ForeignKey('vehicles.comfortability'), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
     pickup_datetime = db.Column(db.DateTime, nullable=False)
     pickup_location = db.Column(db.String(50), nullable=False)

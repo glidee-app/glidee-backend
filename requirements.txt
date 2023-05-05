@@ -4,5 +4,4 @@ flask_swagger==0.2.14
 PyJWT==2.6.0
 PyJWT==2.6.0
 SQLAlchemy==1.4.39
-webargs==8.2.0
 Werkzeug==2.2.2
