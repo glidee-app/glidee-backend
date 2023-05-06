@@ -4,12 +4,15 @@ from flask_swagger import swagger
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 from flask_cors import CORS
-
 from sqlalchemy.exc import IntegrityError
+from send_token import Token
 
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
+
+token=Token()
+new_token=token.confirm_token()
 
 
 @app.get('/')
@@ -18,6 +21,7 @@ def index():
 
 
 @app.post('/signup')
+
 @use_args({
     'first_name': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
     'last_name': fields.Str(required=True, error_messages={'required': 'The last_name field is required'}),
@@ -25,43 +29,9 @@ def index():
     'password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
     'password_confirm': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
 }, location='json')
+
 def signup(data):
-    """
-    Create a new user
-    ---
-    parameters:
-    -   in: body
-        name: data
-        required:
-            - email
-            - first_name
-            - last_name
-            - password
-            - password_confirm
-        properties:
-            email:
-                type: string
-                description: This is the user's email address
-            first_name:
-                type: string
-                description: This is the user's first name
-            last_name:
-                type: string
-                description: This is the user's last name
-            password:
-                type: string
-                description: This is the user's password
-            password_confirm:
-                type: string
-                description: This is the user's password confirmation
-    responses:
-        201:
-            description: User registered successfully.
-        400:
-            description: 
-                - The passwords do not match.
-                - User with email already exist.
-    """
+
     if data['password'] != data['password_confirm']:
         return jsonify({'message': 'The passwords do not match.'}), 400
 
@@ -82,35 +52,14 @@ def signup(data):
 
 
 @app.post('/login')
+
 @use_args({
     'email': fields.Email(required=True),
     'password': fields.Str(required=True),
 }, location='json')
+
 def signin(data):
-    """
-    Login a user by generating auth token
-    ---
-    parameters:
-    -   in: body
-        name: data
-        required:
-            - email
-            - password
-        properties:
-            email:
-                type: string
-                description: This is the user's email address
-            password:
-                type: string
-                description: This is the user's password
-    responses:
-        201:
-            description: User logged in successfully.
-        400:
-            description: Invalid login credentials.
-        500:
-            description: Error occured.
-    """
+
     user = (
         db.session
         .query(User)
@@ -129,6 +78,80 @@ def signin(data):
         'message': 'User logged in successfully.',
         'data': {'token': auth_token}
     }), 200
+
+
+# Forgot email route
+@app.route('/forgot_password/<email>', methods=['GET','POST'])
+
+@use_args({
+    'email': fields.Email(required=True, error_messages={'required': 'The email field is required'})
+}, location='json')
+
+def forgot_password(data):
+
+    email= data['email']
+
+    if not email:
+        return jsonify({'message': 'Invalid login credentials.'}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({'message': 'Invalid email. Please try again.'}), 400
+
+    reset_token = token.send_token(email=email)
+    
+
+    # Here you would send an email to the user containing the reset token
+    # I plan to update this code later by using a service like SendGrid or Mailgun to handle this
+
+    return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
+
+# Reset password route
+@app.route('/reset_password', methods=['GET', 'POST'])
+
+@use_args({
+    'email': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
+    'token': fields.Str(required=True, error_messages={'required': 'The last_name field is required'}),
+    'new_password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
+    'confrim_password': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
+}, location='json')
+
+def reset_password(data):
+
+    email = data['email']
+    token = data['token']
+    new_password = data['new_password']
+    confirm_password = data['confirm_password']
+
+    if not email:
+        return jsonify({'message': 'This string can not be empty'}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({'message': 'Invalid email. Please try again.'}), 401
+
+    if token != new_token:
+        return jsonify({'message': 'Invalid Token. Please try again.'}), 401
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({'message': 'Invalid email. Please try again.'}), 401
+
+    if not new_password:
+        return jsonify({'message': 'This string cannot be empty'}), 400
+
+    if new_password != confirm_password:
+        return jsonify({'message': 'The passwords you entered do not match. Please make sure that both passwords are the same.'}), 400
+
+
+    user.set_password(new_password)
+    db.session.commit()
+
+    return jsonify({'message': 'Password successfully changed.'}), 200
+
 
 @app.route('/orders', methods=['POST'])
 
@@ -180,7 +203,7 @@ def create_order(data):
     # Return the list of available vehicles to the client for them to choose from
     return jsonify({'available_vehicles': available_vehicles}), 200
 
-@app.route('/create_order_with_vehicle/<int:vehicle_id>', methods=['POST'])
+@app.route('/create_order_with_vehicle', methods=['POST'])
 
 # Get data from the client-side request
 @use_args({
@@ -224,8 +247,15 @@ def create_order_with_vehicle(data):
     db.session.commit() 
 
 
-@app.route('/bookings/<int:order_id>', methods=['DELETE'])
-def cancel_order(order_id):
+@app.route('/cancel_order', methods=['DELETE'])
+
+@use_args({
+    'order_id': fields.Str(missing=None, validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='json')
+
+def cancel_order(data):
+
+    order_id=data['order_id']
+    
     # Query the database for the booking with the given ID
     order = Order.query.get(order_id)
     if not order:
