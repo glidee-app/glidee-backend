@@ -68,6 +68,7 @@ class Vehicle(db.Model):
     model = db.Column(db.String(50), nullable=False)
     license_plate = db.Column(db.String(20), nullable=False)
     comfortability = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
     driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=False)
     orders = db.relationship('Order', backref='vehicle', lazy=True)
 
@@ -78,7 +79,7 @@ class Order(db.Model):
     driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=False)
     vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'), nullable=False)
     comfortability=db.Column(db.String(50), db.ForeignKey('vehicles.comfortability'), nullable=False)
-    amount = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Integer, db.ForeignKey('vehicles.amount'),nullable=False)
     pickup_datetime = db.Column(db.DateTime, nullable=False)
     pickup_location = db.Column(db.String(50), nullable=False)
     destination = db.Column(db.String(50), nullable=False)
