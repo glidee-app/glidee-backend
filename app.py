@@ -197,11 +197,11 @@ def create_order(data):
 
 # Get data from the client-side request
 @use_args({
-    'pickup_location': fields.str(required=True, error_messages={'required': 'The pickup_location field is required'}),
-    'destination': fields.str(required=True, error_messages={'required': 'The destination field is required'}),
-    'comfortability': fields.str(validate=validate.OneOf(['shared', 'standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
+    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
+    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
+    'comfortability': fields.Str(validate=validate.OneOf(['shared', 'standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
-    'vehicle_id': fields.str(required=True, error_messages={'required': 'The vehicle_id field is required'})}, location='json')
+    'vehicle_id': fields.Str(required=True, error_messages={'required': 'The vehicle_id field is required'})}, location='json')
 
 def create_order_with_vehicle(data):
 
