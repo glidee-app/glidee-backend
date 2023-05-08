@@ -21,7 +21,6 @@ new_token=token.confirm_token()
 
 @app.get('/')
 def index():
-    db.create_all()
     return render_template("index.html")
 
 
