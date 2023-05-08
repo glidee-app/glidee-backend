@@ -1,6 +1,7 @@
 from models import User, Driver, Order, Vehicle, db
 from flask import Flask, render_template, jsonify
 from flask_swagger import swagger
+from flask_login import current_user
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 from flask_cors import CORS
@@ -161,8 +162,6 @@ def reset_password(data):
     'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
     'comfortability': fields.Str(validate=validate.OneOf(['shared', 'standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
-    'user_email': fields.Str(required=True, error_messages={'required': 'The user_email field is required'}),
-    'amount': fields.Str(validate=validate.OneOf(['3000', '5000', '10000']), required=True, error_messages={'required': 'The amount field is required'})
 }, location='json')
 
 def create_order(data):
@@ -172,15 +171,6 @@ def create_order(data):
     destination = data['destination']
     comfortability = data['comfortability']
     pickup_datetime = data['pickup_datetime']
-    user_email = data['name']
-    amount = data['amount']
-
-    # Check if the user exists in the database
-    user = User.query.filter_by(email=user_email).first()
-    if user:
-        user_id = user.id
-    else:
-        return jsonify({'message': 'User not found'}), 404
 
     # Get a list of all available vehicles that match the user's requested comfortability
     comfortable_vehicles = Vehicle.query.filter_by(comfortability=comfortability).all()
@@ -211,20 +201,18 @@ def create_order(data):
     'destination': fields.str(required=True, error_messages={'required': 'The destination field is required'}),
     'comfortability': fields.str(validate=validate.OneOf(['shared', 'standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
-    'user_email': fields.str(required=True, error_messages={'required': 'The user_email field is required'}),
-    'amount': fields.str(validate=validate.OneOf(['3000', '5000', '10000']), required=True, error_messages={'required': 'The amount field is required'}),
     'vehicle_id': fields.str(required=True, error_messages={'required': 'The vehicle_id field is required'})}, location='json')
 
 def create_order_with_vehicle(data):
 
+    current_user_details = current_user()
+    user_email=current_user_details.email
     # Extract the relevant data from the request
     
     pickup_location = data['pickup_location']
     destination = data['destination']
     comfortability = data['comfortability']
     pickup_datetime = data['pickup_datetime']
-    user_email = data['name']
-    amount = data['amount']
     vehicle_id=data['vehicle_id']
 
 
@@ -234,6 +222,10 @@ def create_order_with_vehicle(data):
         user_id = user.id
     else:
         return jsonify({'message': 'User not found'}), 404
+
+    # get vehicle amount in the database
+    vehicle_amount=Vehicle.query.filter_by(vehicle_id=vehicle_id).first()
+    amount=vehicle_amount.amount
 
     # Check if the selected vehicle exists and is available
     selected_vehicle = Vehicle.query.filter_by(id=vehicle_id, comfortability=comfortability).first()
