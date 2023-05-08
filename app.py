@@ -115,7 +115,7 @@ def forgot_password(data):
     'email': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
     'token': fields.Str(required=True, error_messages={'required': 'The last_name field is required'}),
     'new_password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
-    'confrim_password': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
+    'confirm_password': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
 }, location='json')
 
 def reset_password(data):
@@ -239,17 +239,46 @@ def create_order_with_vehicle(data):
     db.session.commit() 
 
 
+@app.route('/order_history', methods=['GET'])
+
+@use_args({
+    'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'})
+}, location='query')
+
+def get_user_orders(args):
+    user_id = args['user_id']
+
+    # Retrieve all orders of the user from the database
+    orders = Order.query.filter_by(user_id=user_id).all()
+
+    # Prepare the response data
+    order_list = []
+    for order in orders:
+        order_data = {
+            'order_id': order.id,
+            'pickup_location': order.pickup_location,
+            'destination': order.destination,
+            'comfortability': order.comfortability,
+            'pickup_datetime': order.pickup_datetime
+        }
+        order_list.append(order_data)
+
+    return jsonify({'orders': order_list}), 200
+
+
 @app.route('/cancel_order', methods=['DELETE'])
 
 @use_args({
-    'order_id': fields.Str(missing=None, validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='json')
+    'order_id': fields.Int(missing=None, validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='query')
 
 def cancel_order(data):
 
     order_id=data['order_id']
     
     # Query the database for the booking with the given ID
-    order = Order.query.get(order_id)
+    order_id = int(data['order_id'])
+    order = Order.query.filter_by(id=order_id).first()
+
     if not order:
         return jsonify({'message': 'Order not found'}), 404
 
