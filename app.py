@@ -18,6 +18,7 @@ new_token=token.confirm_token()
 
 @app.get('/')
 def index():
+    db.create_all()
     return render_template("index.html")
 
 
@@ -269,12 +270,11 @@ def get_user_orders(args):
 @app.route('/cancel_order', methods=['DELETE'])
 
 @use_args({
-    'order_id': fields.Int(missing=None, validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='query')
+    'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='query')
 
 def cancel_order(data):
 
     order_id=data['order_id']
-    
     # Query the database for the booking with the given ID
     order_id = int(data['order_id'])
     order = Order.query.filter_by(id=order_id).first()
