@@ -18,12 +18,12 @@ db.init_app(app)
 token=Token()
 new_token=token.confirm_token()
 
-
+# home route
 @app.get('/')
 def index():
     return render_template("index.html")
 
-
+# signup route for new users
 @app.route('/signup', methods=["GET", "POST"])
 
 @use_args({
@@ -54,7 +54,7 @@ def signup(data):
 
     return jsonify({'message': f'User registered successfully.'}), 201
 
-
+# login route 
 @app.route('/login', methods=["GET", "POST"])
 
 @use_args({
@@ -156,7 +156,7 @@ def reset_password(data):
 
     return jsonify({'message': 'Password successfully changed.'}), 200
 
-
+# create order route 
 @app.route('/orders', methods=["GET", "POST"])
 
 # Get data from the client-side request
@@ -196,6 +196,7 @@ def create_order(data):
     # Return the list of available vehicles to the client for them to choose from
     return jsonify({'available_vehicles': available_vehicles}), 200
 
+# create order with vehicle route. 
 @app.route('/create_order_with_vehicle', methods=["GET", "POST"])
 
 # Get data from the client-side request
@@ -241,7 +242,7 @@ def create_order_with_vehicle(data):
     db.session.add(new_order)
     db.session.commit() 
 
-
+# order history route. This is where each user get to see their order history 
 @app.route('/order_history', methods=["GET", "POST"])
 
 @use_args({
@@ -268,7 +269,7 @@ def get_user_orders(args):
 
     return jsonify({'orders': order_list}), 200
 
-
+# this is the cancel order route
 @app.route('/cancel_order', methods=['DELETE'])
 
 @use_args({
