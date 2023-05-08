@@ -11,6 +11,9 @@ from send_token import Token
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:3000'])
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
 
 token=Token()
 new_token=token.confirm_token()
@@ -22,7 +25,7 @@ def index():
     return render_template("index.html")
 
 
-@app.post('/signup')
+@app.route('/signup', methods=["GET", "POST"])
 
 @use_args({
     'first_name': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
@@ -53,7 +56,7 @@ def signup(data):
     return jsonify({'message': f'User registered successfully.'}), 201
 
 
-@app.post('/login')
+@app.route('/login', methods=["GET", "POST"])
 
 @use_args({
     'email': fields.Email(required=True),
@@ -155,7 +158,7 @@ def reset_password(data):
     return jsonify({'message': 'Password successfully changed.'}), 200
 
 
-@app.route('/orders', methods=['POST'])
+@app.route('/orders', methods=["GET", "POST"])
 
 # Get data from the client-side request
 @use_args({
@@ -194,7 +197,7 @@ def create_order(data):
     # Return the list of available vehicles to the client for them to choose from
     return jsonify({'available_vehicles': available_vehicles}), 200
 
-@app.route('/create_order_with_vehicle', methods=['POST'])
+@app.route('/create_order_with_vehicle', methods=["GET", "POST"])
 
 # Get data from the client-side request
 @use_args({
@@ -240,7 +243,7 @@ def create_order_with_vehicle(data):
     db.session.commit() 
 
 
-@app.route('/order_history', methods=['GET'])
+@app.route('/order_history', methods=["GET", "POST"])
 
 @use_args({
     'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'})
