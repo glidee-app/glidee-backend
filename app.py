@@ -206,15 +206,14 @@ def create_order(data):
     'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'}),
 
     'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
-    
+
     'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
-    
+
     'comfortability': fields.Str(validate=validate.OneOf(['Shared', 'Standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
 
-    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
+    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
 
     'vehicle_id': fields.Str(required=True, error_messages={'required': 'The vehicle_id field is required'})}, location='json')
-
 def create_order_with_vehicle(data):
 
     user_id = data['user_id']
@@ -252,11 +251,9 @@ def create_order_with_vehicle(data):
 
 
 @app.route('/order_history', methods=["GET", "POST"])
-
 @use_args({
     'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'})
 }, location='json')
-
 def get_user_orders(data):
     user_id = data['user_id']
 
