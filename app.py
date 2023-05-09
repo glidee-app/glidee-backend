@@ -246,9 +246,11 @@ def create_order_with_vehicle(data):
 
 
 @app.route('/order_history', methods=["GET", "POST"])
+
 @use_args({
     'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'})
 }, location='query')
+
 def get_user_orders(args):
     user_id = args['user_id']
 
