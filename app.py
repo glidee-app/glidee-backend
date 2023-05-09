@@ -220,7 +220,7 @@ def create_order_with_vehicle(data):
     pickup_datetime = data['pickup_datetime']
 
     # Check if the user exists in the database
-    user = User.query.filter_by(user_id=user_id).first()
+    user = User.query.filter_by(id=user_id).first()
     if not user:
         return jsonify({'message': 'User not found'}), 400
 
