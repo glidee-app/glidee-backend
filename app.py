@@ -202,15 +202,23 @@ def create_order(data):
 @app.route('/create_order_with_vehicle', methods=["GET", "POST"])
 # Get data from the client-side request
 @use_args({
+
+    'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'}),
+
     'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
+    
     'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
+    
     'comfortability': fields.Str(validate=validate.OneOf(['Shared', 'Standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
+
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
+
     'vehicle_id': fields.Str(required=True, error_messages={'required': 'The vehicle_id field is required'})}, location='json')
+
 def create_order_with_vehicle(data):
 
-    current_user_details = current_user()
-    user_email = current_user_details.email
+    user_id = data['user_id']
+
     # Extract the relevant data from the request
 
     pickup_location = data['pickup_location']
@@ -220,10 +228,8 @@ def create_order_with_vehicle(data):
     vehicle_id = data['vehicle_id']
 
     # Check if the user exists in the database
-    user = User.query.filter_by(email=user_email).first()
-    if user:
-        user_id = user.id
-    else:
+    user = User.query.filter_by(user_id=user_id).first()
+    if not user:
         return jsonify({'message': 'User not found'}), 404
 
     # get vehicle amount in the database
@@ -249,10 +255,10 @@ def create_order_with_vehicle(data):
 
 @use_args({
     'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'})
-}, location='query')
+}, location='json')
 
-def get_user_orders(args):
-    user_id = args['user_id']
+def get_user_orders(data):
+    user_id = data['user_id']
 
     # Retrieve all orders of the user from the database
     orders = Order.query.filter_by(user_id=user_id).all()
