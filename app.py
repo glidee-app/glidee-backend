@@ -270,7 +270,7 @@ def get_user_orders(args):
     return jsonify({'orders': order_list}), 200
 
 # this is the cancel order route
-@app.route('/cancel_order', methods=['DELETE'])
+@app.route('/cancel_order', methods=['GET', 'DELETE'])
 
 @use_args({
     'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='query')
