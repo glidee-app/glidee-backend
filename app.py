@@ -202,18 +202,12 @@ def create_order(data):
 @app.route('/create_order_with_vehicle', methods=["GET", "POST"])
 # Get data from the client-side request
 @use_args({
-
     'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'}),
-
     'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
-
     'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
-
     'comfortability': fields.Str(validate=validate.OneOf(['Shared', 'Standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
-
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
-
-    'vehicle_id': fields.Str(required=True, error_messages={'required': 'The vehicle_id field is required'})}, location='json')
+}, location='json')
 def create_order_with_vehicle(data):
 
     user_id = data['user_id']
@@ -224,25 +218,20 @@ def create_order_with_vehicle(data):
     destination = data['destination']
     comfortability = data['comfortability']
     pickup_datetime = data['pickup_datetime']
-    vehicle_id = data['vehicle_id']
 
     # Check if the user exists in the database
     user = User.query.filter_by(user_id=user_id).first()
     if not user:
-        return jsonify({'message': 'User not found'}), 404
+        return jsonify({'message': 'User not found'}), 400
 
-    # get vehicle amount in the database
-    vehicle_amount = Vehicle.query.filter_by(vehicle_id=vehicle_id).first()
-    amount = vehicle_amount.amount
+    vehicle = Vehicle.query.filter_by(
+        comfortability=comfortability).first()
 
-    # Check if the selected vehicle exists and is available
-    selected_vehicle = Vehicle.query.filter_by(
-        id=vehicle_id, comfortability=comfortability).first()
-    if not selected_vehicle:
-        return jsonify({'message': 'Vehicle not found or not available for the requested comfortability'}), 404
+    if not vehicle:
+        return jsonify({'message': 'All Glidee drivers are busy.'}), 400
 
     # Register the order in the database
-    new_order = Order(user_id=user_id, driver_id=selected_vehicle.driver_id, vehicle_id=selected_vehicle.id, amount=amount,
+    new_order = Order(user_id=user_id, driver_id=vehicle.driver_id, vehicle_id=vehicle.id, amount=vehicle.amount,
                       pickup_location=pickup_location, pickup_datetime=pickup_datetime, destination=destination, comfortability=comfortability)
     db.session.add(new_order)
     db.session.commit()
