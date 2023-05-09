@@ -74,7 +74,8 @@ class Vehicle(db.Model):
     amount = db.Column(db.Integer, nullable=False)
     driver_id = db.Column(db.Integer, db.ForeignKey(
         'drivers.id'), nullable=False)
-    orders = db.relationship('Order', back_populates='vehicle')
+    orders = db.relationship(
+        'Order', back_populates='vehicle', foreign_keys="Order.vehicle_id")
 
 
 class Order(db.Model):
