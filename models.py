@@ -1,6 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Text, Boolean, Integer, Column, ForeignKey
+from sqlalchemy.orm import relationship
 import jwt
 
 
@@ -17,7 +19,8 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    orders = db.relationship('Order', backref='user', lazy=True)
+    order = db.relationship('Order', back_populates='users', lazy=True)
+    
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -63,7 +66,7 @@ class Driver(db.Model):
     phone_number = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     available = db.Column(db.Boolean, nullable=False)
-    vehicles = db.relationship('Vehicle', backref='driver', lazy=True)
+    vehicle = db.relationship('Vehicle', back_populates='drivers', lazy=True)
 
 
 class Vehicle(db.Model):
@@ -71,11 +74,11 @@ class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     make = db.Column(db.String(50), nullable=False)
     model = db.Column(db.String(50), nullable=False)
-    license_plate = db.Column(db.String(20), nullable=False)
+    license_plate = db.Column(db.String(50), nullable=False)
     comfortability = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
     driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=False)
-    orders = db.relationship('Vehicle', back_populates='vehicles', lazy=True)
+    order = db.relationship('Order', back_populates='vehicles', lazy=True)
 
 
 class Order(db.Model):
@@ -86,12 +89,11 @@ class Order(db.Model):
         'drivers.id'), nullable=False)
     vehicle_id = db.Column(db.Integer, db.ForeignKey(
         'vehicles.id'), nullable=False)
-    comfortability = db.Column(db.String(50), db.ForeignKey(
-        'vehicles.comfortability'), nullable=False)
-    amount = db.Column(db.Integer, db.ForeignKey(
-        'vehicles.amount'), nullable=False)
+    comfortability = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
     pickup_datetime = db.Column(db.DateTime, nullable=False)
     pickup_location = db.Column(db.String(50), nullable=False)
     destination = db.Column(db.String(50), nullable=False)
-    vehicles = db.relationship('Vehicle', back_populates='orders', lazy=True)
-    drivers = db.relationship('Vehicle', back_populates='orders', lazy=True)
+    user = db.relationship('User', back_populates='orders', lazy=True)
+    driver = db.relationship('Driver', back_populates='orders', lazy=True)
+    vehicle = db.relationship('Vehicle', back_populates='orders', lazy=True)

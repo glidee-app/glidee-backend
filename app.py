@@ -18,9 +18,8 @@ db.init_app(app)
 token = Token()
 new_token = token.confirm_token()
 
+
 # home route
-
-
 @app.get('/')
 def index():
     db.create_all()
