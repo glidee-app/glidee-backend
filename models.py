@@ -93,5 +93,5 @@ class Order(db.Model):
     pickup_datetime = db.Column(db.DateTime, nullable=False)
     pickup_location = db.Column(db.String(50), nullable=False)
     destination = db.Column(db.String(50), nullable=False)
-    vehicles = db.relationship('Vehicle', back_populates='orders' lazy=True)
-    drivers = db.relationship('Vehicle', back_populates='orders' lazy=True)
+    vehicles = db.relationship('Vehicle', back_populates='orders', lazy=True)
+    drivers = db.relationship('Vehicle', back_populates='orders', lazy=True)
