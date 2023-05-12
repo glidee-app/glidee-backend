@@ -267,7 +267,7 @@ def get_user_orders(data):
 
 @app.route('/cancel_order', methods=['GET', 'DELETE'])
 @use_args({
-    'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='query')
+    'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='json')
 def cancel_order(data):
 
     order_id = data['order_id']
