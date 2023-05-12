@@ -1,6 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
-from sqlalchemy import Integer, Column, String, DateTime
 from flask_sqlalchemy import SQLAlchemy
 import jwt
 
