@@ -25,7 +25,7 @@ class Token():
                 connection.sendmail(
                     from_addr=my_email,
                     to_addrs=reciever_email,
-                    msg=f"Subject: Your Token\n\n {token}"
+                    msg=f"Subject: Your Token\n\n Hi, there. You're about to reset your Password. Please, approve this action with this Token: {token} or call +2349064531233 if you suspect this to be suspicious."
                 )
 
             except Exception as e:
