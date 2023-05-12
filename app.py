@@ -208,6 +208,7 @@ def create_order(data):
     'comfortability': fields.Str(validate=validate.OneOf(['Shared', 'Standard']), required=True, error_messages={'required': 'The comfortability field is required'}),
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'})
 }, location='json')
+
 def create_order_with_vehicle(data):
 
     user_id = data['user_id']

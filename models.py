@@ -74,10 +74,8 @@ class Vehicle(db.Model):
     license_plate = db.Column(db.String(20), nullable=False)
     comfortability = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
-    driver_id = db.Column(db.Integer, db.ForeignKey(
-        'drivers.id'), nullable=False)
-    orders = db.relationship(
-        'Order', back_populates='vehicle', foreign_keys="Order.vehicle_id")
+    driver_id = db.Column(db.Integer, db.ForeignKey('drivers.id'), nullable=False)
+    orders = db.relationship('Vehicle', back_populates='vehicles', lazy=True)
 
 
 class Order(db.Model):
@@ -88,8 +86,6 @@ class Order(db.Model):
         'drivers.id'), nullable=False)
     vehicle_id = db.Column(db.Integer, db.ForeignKey(
         'vehicles.id'), nullable=False)
-    vehicle = db.relationship(
-        'Vehicle', foreign_keys="Order.vehicle_id", back_populates='orders')
     comfortability = db.Column(db.String(50), db.ForeignKey(
         'vehicles.comfortability'), nullable=False)
     amount = db.Column(db.Integer, db.ForeignKey(
@@ -97,3 +93,5 @@ class Order(db.Model):
     pickup_datetime = db.Column(db.DateTime, nullable=False)
     pickup_location = db.Column(db.String(50), nullable=False)
     destination = db.Column(db.String(50), nullable=False)
+    vehicles = db.relationship('Vehicle', back_populates='orders' lazy=True)
+    drivers = db.relationship('Vehicle', back_populates='orders' lazy=True)
