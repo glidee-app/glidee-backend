@@ -1,7 +1,6 @@
 from models import User, Driver, Order, Vehicle, db
 from flask import Flask, render_template, jsonify
 from flask_swagger import swagger
-from flask_login import current_user
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 from flask_cors import CORS
@@ -22,9 +21,8 @@ new_token = token.confirm_token()
 # home route
 @app.get('/')
 def index():
+    db.create_all()
     return render_template("index.html")
-
-# signup route for new users
 
 
 @app.route('/signup', methods=["GET", "POST"])
@@ -162,7 +160,7 @@ def reset_password(data):
     'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
     'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
     'comfortability': fields.Str(validate=validate.OneOf(['Shared', 'Standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
-    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
+    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
 }, location='json')
 def create_order(data):
 
@@ -234,8 +232,10 @@ def create_order_with_vehicle(data):
                       pickup_location=pickup_location, pickup_datetime=pickup_datetime, destination=destination, comfortability=comfortability)
     db.session.add(new_order)
     db.session.commit()
+    return jsonify({'message': 'Order created successfully'}), 200
 
 # order history route. This is where each user get to see their order history
+
 
 
 @app.route('/order_history', methods=["GET", "POST"])
