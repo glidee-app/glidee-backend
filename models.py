@@ -29,11 +29,14 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def generate_auth_token(self, user_id):
+    def generate_auth_token(self):
         payload = {
             'exp': datetime.utcnow() + timedelta(days=1),
             'iat': datetime.utcnow(),
-            'sub': user_id
+            'sub': {
+                'user_id': self.id,
+                'user_name': f'{self.first_name} {self.last_name}'
+            }
         }
         return jwt.encode(
             payload,

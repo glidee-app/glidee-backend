@@ -77,7 +77,7 @@ def signin(data):
         return jsonify({'message': 'Invalid login credentials.'}), 400
 
     try:
-        auth_token = user.generate_auth_token(user.id)
+        auth_token = user.generate_auth_token()
     except Exception:
         return jsonify({'message': 'Error occured.'}), 500
 
