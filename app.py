@@ -22,7 +22,6 @@ new_token = token.confirm_token()
 # home route
 @app.get('/')
 def index():
-    db.create_all()
     return render_template("index.html")
 
 # signup route for new users
