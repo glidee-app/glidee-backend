@@ -6,13 +6,14 @@ from flask_cors import CORS
 from sqlalchemy.exc import IntegrityError
 from send_token import Token
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
+import os
 
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = 'some-random-key'
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'some-secret-key')
 
 jwt = JWTManager(app)
 db.init_app(app)
