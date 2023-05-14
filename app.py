@@ -1,18 +1,23 @@
 from models import User, Driver, Order, Vehicle, db
 from flask import Flask, render_template, jsonify
-from flask_swagger import swagger
 from webargs import fields, validate
 from webargs.flaskparser import use_args
 from flask_cors import CORS
 from sqlalchemy.exc import IntegrityError
 from send_token import Token
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:3000'])
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///../app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = 'some-random-key'
+
+jwt = JWTManager(app)
 db.init_app(app)
+CORS(app, origins=['http://localhost:3000'])
+
 
 token = Token()
 new_token = token.confirm_token()
@@ -41,7 +46,7 @@ def signup(data):
     user = User(
         first_name=data['first_name'],
         last_name=data['last_name'],
-        email=data['email']
+        email=data['email'].lower()
     )
     user.set_password(data['password'])
     try:
@@ -66,7 +71,7 @@ def signin(data):
     user = (
         db.session
         .query(User)
-        .filter((User.email == data['email']))
+        .filter((User.email == data['email'].lower()))
         .first()
     )
     if not user or not user.check_password(data['password']):
@@ -84,7 +89,7 @@ def signin(data):
 
 
 # Forgot email route
-@app.route('/forgot_password/<email>', methods=['GET', 'POST'])
+@app.post('/forgot_password')
 @use_args({
     'email': fields.Email(required=True, error_messages={'required': 'The email field is required'})
 }, location='json')
@@ -154,144 +159,128 @@ def reset_password(data):
 # create order route
 
 
-@app.route('/orders', methods=["GET", "POST"])
-# Get data from the client-side request
+@app.get('/vehicles')
+@jwt_required()
 @use_args({
-    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
-    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
     'comfortability': fields.Str(validate=validate.OneOf(['Shared', 'Standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
+}, location='query')
+def fetch_vehicles(data):
+    vehicles_model = Vehicle.query.filter_by(
+        comfortability=data['comfortability']).all()
+
+    vehicles = []
+    for vehicle_model in vehicles_model:
+        vehicles.append({
+            'id': vehicle_model.id,
+            'model': vehicle_model.model,
+            'make': vehicle_model.make,
+            'license_plate': vehicle_model.license_plate,
+            'amount': vehicle_model.amount,
+            'comfortability': vehicle_model.comfortability,
+            'driver': {
+                'id': vehicle_model.driver.id,
+                'name': vehicle_model.driver.name,
+            }
+        })
+
+    return jsonify({
+        'data': {'vehicles': vehicles},
+        'message': 'Vehicles fetched successully'
+    }), 200
+
+
+@app.post('/order')
+@jwt_required()
+@use_args({
+    'vehicle_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
+    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
+    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
+    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'})
 }, location='json')
 def create_order(data):
 
-    # Extract the relevant data from the request
-    pickup_location = data['pickup_location']
-    destination = data['destination']
-    comfortability = data['comfortability']
-    pickup_datetime = data['pickup_datetime']
-
-    # Get a list of all available vehicles that match the user's requested comfortability
-    comfortable_vehicles = Vehicle.query.filter_by(
-        comfortability=comfortability).all()
-
-    if not comfortable_vehicles:
-        return jsonify({'message': 'No available vehicles found for the requested comfortability'}), 404
-
-    # Create a list of dictionaries containing information about each available vehicle
-    available_vehicles = []
-    for vehicle in comfortable_vehicles:
-        vehicle_data = {}
-        vehicle_data['id'] = vehicle.id
-        vehicle_data['make'] = vehicle.make
-        vehicle_data['model'] = vehicle.model
-        vehicle_data['license_plate'] = vehicle.license_plate
-        vehicle_data['driver_id'] = vehicle.driver_id
-
-        available_vehicles.append(vehicle_data)
-
-    # Return the list of available vehicles to the client for them to choose from
-    return jsonify({'available_vehicles': available_vehicles}), 200
-
-# create order with vehicle route.
-
-
-@app.route('/create_order_with_vehicle', methods=["GET", "POST"])
-# Get data from the client-side request
-@use_args({
-    'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'}),
-    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
-    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
-    'comfortability': fields.Str(validate=validate.OneOf(['Shared', 'Standard']), required=True, error_messages={'required': 'The comfortability field is required'}),
-    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'})
-}, location='json')
-
-def create_order_with_vehicle(data):
-
-    user_id = data['user_id']
-
-    # Extract the relevant data from the request
-
-    pickup_location = data['pickup_location']
-    destination = data['destination']
-    comfortability = data['comfortability']
-    pickup_datetime = data['pickup_datetime']
-
-    # Check if the user exists in the database
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        return jsonify({'message': 'User not found'}), 400
+    user = get_jwt_identity()
 
     vehicle = Vehicle.query.filter_by(
-        comfortability=comfortability).first()
+        id=data['vehicle_id']).first()
 
     if not vehicle:
-        return jsonify({'message': 'All Glidee drivers are busy.'}), 400
+        return jsonify({'message': 'Invalid vehicle ID'}), 400
 
-    # Register the order in the database
-    new_order = Order(user_id=user_id, driver_id=vehicle.driver_id, vehicle_id=vehicle.id, amount=vehicle.amount,
-                      pickup_location=pickup_location, pickup_datetime=pickup_datetime, destination=destination, comfortability=comfortability)
-    db.session.add(new_order)
+    order = Order(
+        user_id=user['user_id'],
+        driver_id=vehicle.driver_id,
+        vehicle_id=vehicle.id,
+        amount=vehicle.amount,
+        comfortability=vehicle.comfortability,
+        pickup_location=data['pickup_location'],
+        pickup_datetime=data['pickup_datetime'],
+        destination=data['destination'],
+    )
+    db.session.add(order)
     db.session.commit()
-    return jsonify({'message': 'Order created successfully'}), 200
-
-# order history route. This is where each user get to see their order history
+    return jsonify({'message': 'Order created successfully'}), 201
 
 
+@app.get('/orders')
+@jwt_required()
+def get_user_orders():
+    user = get_jwt_identity()
 
-@app.route('/order_history', methods=["GET", "POST"])
-@use_args({
-    'user_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The user_id field is required'})
-}, location='json')
-def get_user_orders(data):
-    user_id = data['user_id']
+    order_models = Order.query.filter_by(user_id=user['user_id']).all()
+    orders = []
 
-    # Retrieve all orders of the user from the database
-    orders = Order.query.filter_by(user_id=user_id).all()
+    for order_model in order_models:
+        orders.append({
+            'id': order_model.id,
+            'pickup_location': order_model.pickup_location,
+            'destination': order_model.destination,
+            'pickup_datetime': order_model.pickup_datetime,
+            'amount': order_model.amount,
+            'comfortability': order_model.comfortability,
+            'vehicle': {
+                'id': order_model.vehicle.id,
+                'make': order_model.vehicle.make,
+                'model': order_model.vehicle.make,
+                'license_plate': order_model.vehicle.license_plate,
+            },
+            'status': order_model.status,
+        })
 
-    # Prepare the response data
-    order_list = []
-    for order in orders:
-        order_data = {
-            'order_id': order.id,
-            'pickup_location': order.pickup_location,
-            'destination': order.destination,
-            'comfortability': order.comfortability,
-            'pickup_datetime': order.pickup_datetime
-        }
-        order_list.append(order_data)
-
-    return jsonify({'orders': order_list}), 200
-
-# this is the cancel order route
+    return jsonify({
+        'data': {'orders': orders},
+        'message': 'Orders fetched successfully'
+    }), 200
 
 
-@app.route('/cancel_order', methods=['GET', 'DELETE'])
+@app.post('/cancel_order')
+@jwt_required()
 @use_args({
     'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='json')
 def cancel_order(data):
+    user = get_jwt_identity()
 
-    order_id = data['order_id']
-    # Query the database for the booking with the given ID
-    order_id = int(data['order_id'])
-    order = Order.query.filter_by(id=order_id).first()
-
+    order = Order.query.filter_by(
+        id=data['order_id'],
+        user_id=user['user_id']
+    ).first()
     if not order:
-        return jsonify({'message': 'Order not found'}), 404
+        return jsonify({'message': 'Invalid order ID'}), 400
 
-    # Delete the booking from the database
-    db.session.delete(order)
+    order.status = 0  # 0 - cancelled, 1 - active.
     db.session.commit()
 
-    # Return a success message to the client
     return jsonify({'message': 'Order cancelled successfully'}), 200
 
 
-@app.get('/spec')
-def spec():
-    swag = swagger(app)
-    swag['info']['version'] = '1.0'
-    swag['info']['title'] = 'Glidee App API'
-    return jsonify(swag)
+@jwt.expired_token_loader
+@jwt.invalid_token_loader
+@jwt.unauthorized_loader
+def my_expired_token_callback(jwt_header, jwt_value=None):
+    return jsonify({
+        'message': 'Unauthorized! Please login and try again.'
+    }), 401
 
 
 @app.errorhandler(422)

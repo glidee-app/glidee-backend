@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-import jwt
+from flask_jwt_extended import create_access_token
 
 
 db = SQLAlchemy()
@@ -29,31 +29,10 @@ class User(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def generate_auth_token(self):
-        payload = {
-            'exp': datetime.utcnow() + timedelta(days=1),
-            'iat': datetime.utcnow(),
-            'sub': {
-                'user_id': self.id,
-                'user_name': f'{self.first_name} {self.last_name}'
-            }
-        }
-        return jwt.encode(
-            payload,
-            algorithm='HS256',
-            key='some-random-key'
-        )
-
-    def decode_auth_token(auth_token):
-        try:
-            payload = jwt.decode(
-                auth_token,
-                key='some-random-key'
-            )
-            return payload.get('sub')
-        except jwt.ExpiredSignatureError:
-            raise Exception('Token expired. Please log in again.')
-        except jwt.InvalidTokenError:
-            raise Exception('Invalid token. Please log in again.')
+        return create_access_token({
+            'user_id': self.id,
+            'user_name': f'{self.first_name} {self.last_name}'
+        })
 
 
 class Driver(db.Model):
@@ -61,8 +40,8 @@ class Driver(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    available = db.Column(db.Boolean, nullable=False)
+    email = db.Column(db.String(50), nullable=False, unique=True)
+    available = db.Column(db.Boolean, nullable=False, default=True)
     vehicles = db.relationship('Vehicle', backref='driver', lazy=True)
 
 
@@ -80,7 +59,6 @@ class Vehicle(db.Model):
         'Order', back_populates='vehicle', foreign_keys="Order.vehicle_id", lazy=True)
 
 
-
 class Order(db.Model):
     __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True)
@@ -91,7 +69,7 @@ class Order(db.Model):
         'vehicles.id'), nullable=False)
     vehicle = db.relationship(
         'Vehicle', foreign_keys="Order.vehicle_id", back_populates='orders')
-    
+
     comfortability = db.Column(db.String(50), db.ForeignKey(
         'vehicles.comfortability'), nullable=False)
     amount = db.Column(db.Integer, db.ForeignKey(
@@ -100,5 +78,5 @@ class Order(db.Model):
     pickup_location = db.Column(db.String(50), nullable=False)
     destination = db.Column(db.String(50), nullable=False)
 
-
-
+    # 1 represents active while 0 represents cancelled
+    status = db.Column(db.Integer, nullable=False, default=1)
