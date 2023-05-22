@@ -1,4 +1,4 @@
-from models import User, Driver, Order, Vehicle, db
+from models import User, Driver, Order, Vehicle, db, Ride
 from flask import Flask, render_template, jsonify
 from webargs import fields, validate
 from webargs.flaskparser import use_args
@@ -160,34 +160,44 @@ def reset_password(data):
 # create order route
 
 
-@app.get('/vehicles')
+@app.get('/rides')
 @jwt_required()
 @use_args({
-    'comfortability': fields.Str(validate=validate.OneOf(['Shared', 'Standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
-    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
+    'comfortability': fields.Str(validate=validate.OneOf(['standard', 'premium']), required=True, error_messages={'required': 'The comfortability field is required'}),
+    'pickup_date': fields.Date(format='%Y-%m-%d', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
+    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
+    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
 }, location='query')
-def fetch_vehicles(data):
-    vehicles_model = Vehicle.query.filter_by(
-        comfortability=data['comfortability']).all()
+def fetch_rides(data):
+    rides_model = (
+        Ride.query.join(Ride.vehicle)
+        .filter(Vehicle.comfortability == data['comfortability'])
+        .filter(Ride.pickup_date == data['pickup_date'])
+        .filter(Ride.pickup_location == data['pickup_location'])
+        .filter(Ride.destination == data['destination'])
+        .all()
+    )
 
-    vehicles = []
-    for vehicle_model in vehicles_model:
-        vehicles.append({
-            'id': vehicle_model.id,
-            'model': vehicle_model.model,
-            'make': vehicle_model.make,
-            'license_plate': vehicle_model.license_plate,
-            'amount': vehicle_model.amount,
-            'comfortability': vehicle_model.comfortability,
+    rides = []
+    for ride_model in rides_model:
+        rides.append({
+            'id': ride_model.id,
+            'vehicle': {
+                'make': ride_model.vehicle.make,
+                'model': ride_model.vehicle.model,
+                'license_plate': ride_model.vehicle.license_plate,
+            },
+            'amount': ride_model.amount,
+            'comfortability': ride_model.comfortability,
             'driver': {
-                'id': vehicle_model.driver.id,
-                'name': vehicle_model.driver.name,
+                'id': ride_model.vehicle.driver_id,
+                'name': ride_model.vehicle.driver.name,
             }
         })
 
     return jsonify({
-        'data': {'vehicles': vehicles},
-        'message': 'Vehicles fetched successully'
+        'data': {'rides': rides},
+        'message': 'Rides fetched successully'
     }), 200
 
 

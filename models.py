@@ -41,8 +41,10 @@ class Driver(db.Model):
     name = db.Column(db.String(50), nullable=False)
     phone_number = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    available = db.Column(db.Boolean, nullable=False, default=True)
-    vehicles = db.relationship('Vehicle', backref='driver', lazy=True)
+    vehicles = db.relationship('Vehicle', back_populates='driver', lazy=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class Vehicle(db.Model):
@@ -52,31 +54,41 @@ class Vehicle(db.Model):
     model = db.Column(db.String(50), nullable=False)
     license_plate = db.Column(db.String(20), nullable=False)
     comfortability = db.Column(db.String(50), nullable=False)
-    amount = db.Column(db.Integer, nullable=False)
     driver_id = db.Column(db.Integer, db.ForeignKey(
         'drivers.id'), nullable=False)
-    orders = db.relationship(
-        'Order', back_populates='vehicle', foreign_keys="Order.vehicle_id", lazy=True)
+    driver = db.relationship('Driver', back_populates='vehicles', lazy=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class Order(db.Model):
     __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    driver_id = db.Column(db.Integer, db.ForeignKey(
-        'drivers.id'), nullable=False)
+    ride_id = db.Column(db.Integer, db.ForeignKey('rides.id'), nullable=False)
+    # 1 represents active while 0 represents cancelled
+    ride = db.relationship(
+        'Ride', back_populates='orders')
+    status = db.Column(db.Integer, nullable=False, default=1)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class Ride(db.Model):
+    __tablename__ = "rides"
+    id = db.Column(db.Integer, primary_key=True)
     vehicle_id = db.Column(db.Integer, db.ForeignKey(
         'vehicles.id'), nullable=False)
-    vehicle = db.relationship(
-        'Vehicle', foreign_keys="Order.vehicle_id", back_populates='orders')
-
-    comfortability = db.Column(db.String(50), db.ForeignKey(
-        'vehicles.comfortability'), nullable=False)
-    amount = db.Column(db.Integer, db.ForeignKey(
-        'vehicles.amount'), nullable=False)
-    pickup_datetime = db.Column(db.DateTime, nullable=False)
+    vehicle = db.relationship('Vehicle', foreign_keys="Ride.vehicle_id")
+    amount = db.Column(db.Integer, nullable=False)
     pickup_location = db.Column(db.String(50), nullable=False)
     destination = db.Column(db.String(50), nullable=False)
-
-    # 1 represents active while 0 represents cancelled
-    status = db.Column(db.Integer, nullable=False, default=1)
+    pickup_date = db.Column(db.Date, nullable=False)
+    pickup_time = db.Column(db.String(50), nullable=False)
+    orders = db.relationship(
+        'Order', back_populates='ride', foreign_keys="Order.ride_id", lazy=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
