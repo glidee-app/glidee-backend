@@ -236,16 +236,16 @@ def get_user_orders():
     for order_model in order_models:
         orders.append({
             'id': order_model.id,
-            'pickup_location': order_model.pickup_location,
-            'destination': order_model.destination,
-            'pickup_datetime': order_model.pickup_datetime,
-            'amount': order_model.amount,
-            'comfortability': order_model.comfortability,
+            'pickup_location': order_model.ride.pickup_location,
+            'destination': order_model.ride.destination,
+            'pickup_time': order_model.ride.pickup_time,
+            'amount': order_model.ride.amount,
             'vehicle': {
-                'id': order_model.vehicle.id,
-                'make': order_model.vehicle.make,
-                'model': order_model.vehicle.make,
-                'license_plate': order_model.vehicle.license_plate,
+                'id': order_model.ride.vehicle.id,
+                'make': order_model.ride.vehicle.make,
+                'model': order_model.ride.vehicle.make,
+                'license_plate': order_model.ride.vehicle.license_plate,
+                'comfortability': order_model.ride.vehicle.comfortability,
             },
             'status': order_model.status,
         })
