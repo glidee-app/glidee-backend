@@ -182,13 +182,13 @@ def fetch_rides(data):
     for ride_model in rides_model:
         rides.append({
             'id': ride_model.id,
+            'amount': ride_model.amount,
             'vehicle': {
                 'make': ride_model.vehicle.make,
                 'model': ride_model.vehicle.model,
                 'license_plate': ride_model.vehicle.license_plate,
+                'comfortability': ride_model.vehicle.comfortability,
             },
-            'amount': ride_model.amount,
-            'comfortability': ride_model.comfortability,
             'driver': {
                 'id': ride_model.vehicle.driver_id,
                 'name': ride_model.vehicle.driver.name,
