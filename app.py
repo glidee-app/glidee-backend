@@ -204,30 +204,21 @@ def fetch_rides(data):
 @app.post('/order')
 @jwt_required()
 @use_args({
-    'vehicle_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
-    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
-    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
-    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'})
+    'ride_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
 }, location='json')
 def create_order(data):
 
     user = get_jwt_identity()
 
-    vehicle = Vehicle.query.filter_by(
-        id=data['vehicle_id']).first()
+    ride = Ride.query.filter_by(
+        id=data['ride_id']).first()
 
-    if not vehicle:
-        return jsonify({'message': 'Invalid vehicle ID'}), 400
+    if not ride:
+        return jsonify({'message': 'Invalid ride ID'}), 400
 
     order = Order(
         user_id=user['user_id'],
-        driver_id=vehicle.driver_id,
-        vehicle_id=vehicle.id,
-        amount=vehicle.amount,
-        comfortability=vehicle.comfortability,
-        pickup_location=data['pickup_location'],
-        pickup_datetime=data['pickup_datetime'],
-        destination=data['destination'],
+        ride_id=data['ride_id'],
     )
     db.session.add(order)
     db.session.commit()
