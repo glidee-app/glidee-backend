@@ -192,7 +192,8 @@ def fetch_rides(data):
             'driver': {
                 'id': ride_model.vehicle.driver_id,
                 'name': ride_model.vehicle.driver.name,
-            }
+            },
+            'pickup_time': ride_model.pickup_time,
         })
 
     return jsonify({
@@ -230,7 +231,12 @@ def create_order(data):
 def get_user_orders():
     user = get_jwt_identity()
 
-    order_models = Order.query.filter_by(user_id=user['user_id']).all()
+    order_models = (
+        Order.query
+        .filter_by(user_id=user['user_id'])
+        .order_by(Order.created_at)
+        .all()
+    )
     orders = []
 
     for order_model in order_models:
@@ -240,6 +246,7 @@ def get_user_orders():
             'destination': order_model.ride.destination,
             'pickup_time': order_model.ride.pickup_time,
             'amount': order_model.ride.amount,
+            'pickup_date': order_model.ride.pickup_date,
             'vehicle': {
                 'id': order_model.ride.vehicle.id,
                 'make': order_model.ride.vehicle.make,
@@ -249,6 +256,8 @@ def get_user_orders():
             },
             'status': order_model.status,
         })
+
+        orders[-1]['pickup_date'] = orders[-1]['pickup_date'].isoformat()
 
     return jsonify({
         'data': {'orders': orders},
