@@ -163,8 +163,53 @@ def reset_password(data):
 @use_args({
     'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
     'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
+<<<<<<< Updated upstream
     'comfortability': fields.Str(validate=validate.OneOf(['shared', 'standard', 'Luxury']), required=True, error_messages={'required': 'The comfortability field is required'}),
     'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M:%S', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
+=======
+}, location='query')
+def fetch_rides(data):
+    rides_model = (
+        Ride.query.join(Ride.vehicle)
+        .filter(Vehicle.comfortability == data['comfortability'])
+        .filter(Ride.pickup_date == data['pickup_date'])
+        .filter(Ride.pickup_location == data['pickup_location'])
+        .filter(Ride.destination == data['destination'])
+        .filter(Ride.is_booked == False)
+        .all()
+    )
+
+    rides = []
+    for ride_model in rides_model:
+        rides.append({
+            'id': ride_model.id,
+            'vehicle': {
+                'make': ride_model.vehicle.make,
+                'model': ride_model.vehicle.model,
+                'license_plate': ride_model.vehicle.license_plate,
+            },
+            'amount': ride_model.amount,
+            'comfortability': ride_model.comfortability,
+            'driver': {
+                'id': ride_model.vehicle.driver_id,
+                'name': ride_model.vehicle.driver.name,
+            }
+        })
+
+    return jsonify({
+        'data': {'rides': rides},
+        'message': 'Rides fetched successully'
+    }), 200
+
+
+@app.post('/order')
+@jwt_required()
+@use_args({
+    'vehicle_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
+    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
+    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
+    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'})
+>>>>>>> Stashed changes
 }, location='json')
 
 def create_order(data):
@@ -175,8 +220,13 @@ def create_order(data):
     comfortability = data['comfortability']
     pickup_datetime = data['pickup_datetime']
 
+<<<<<<< Updated upstream
     # Get a list of all available vehicles that match the user's requested comfortability
     comfortable_vehicles = Vehicle.query.filter_by(comfortability=comfortability).all()
+=======
+    ride = Ride.query.filter_by(
+        id=data['vehicle_id']).first()
+>>>>>>> Stashed changes
 
     if not comfortable_vehicles:
         return jsonify({'message': 'No available vehicles found for the requested comfortability'}), 404
@@ -191,6 +241,7 @@ def create_order(data):
         vehicle_data['license_plate'] = vehicle.license_plate
         vehicle_data['driver_id'] = vehicle.driver_id
 
+<<<<<<< Updated upstream
         available_vehicles.append(vehicle_data)
 
     # Return the list of available vehicles to the client for them to choose from
@@ -200,6 +251,56 @@ def create_order(data):
 @app.route('/create_order_with_vehicle', methods=["GET", "POST"])
 
 # Get data from the client-side request
+=======
+    order = Order(
+        user_id=user['user_id'],
+        driver_id=ride.driver_id,
+        vehicle_id=ride.id,
+        amount=ride.amount,
+        comfortability=ride.comfortability,
+        pickup_location=data['pickup_location'],
+        pickup_datetime=data['pickup_datetime'],
+        destination=data['destination'],
+    )
+    db.session.add(order)
+    db.session.commit()
+    return jsonify({'message': 'Order created successfully'}), 201
+
+
+@app.get('/orders')
+@jwt_required()
+def get_user_orders():
+    user = get_jwt_identity()
+
+    order_models = Order.query.filter_by(user_id=user['user_id']).all()
+    orders = []
+
+    for order_model in order_models:
+        orders.append({
+            'id': order_model.id,
+            'pickup_location': order_model.pickup_location,
+            'destination': order_model.destination,
+            'pickup_datetime': order_model.pickup_datetime,
+            'amount': order_model.amount,
+            'comfortability': order_model.comfortability,
+            'vehicle': {
+                'id': order_model.vehicle.id,
+                'make': order_model.vehicle.make,
+                'model': order_model.vehicle.make,
+                'license_plate': order_model.vehicle.license_plate,
+            },
+            'status': order_model.status,
+        })
+
+    return jsonify({
+        'data': {'orders': orders},
+        'message': 'Orders fetched successfully'
+    }), 200
+
+
+@app.post('/cancel_order')
+@jwt_required()
+>>>>>>> Stashed changes
 @use_args({
     'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
     'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
