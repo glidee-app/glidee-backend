@@ -183,17 +183,18 @@ def fetch_rides(data):
     for ride_model in rides_model:
         rides.append({
             'id': ride_model.id,
+            'amount': ride_model.amount,
             'vehicle': {
                 'make': ride_model.vehicle.make,
                 'model': ride_model.vehicle.model,
                 'license_plate': ride_model.vehicle.license_plate,
+                'comfortability': ride_model.vehicle.comfortability,
             },
-            'amount': ride_model.amount,
-            'comfortability': ride_model.comfortability,
             'driver': {
                 'id': ride_model.vehicle.driver_id,
                 'name': ride_model.vehicle.driver.name,
-            }
+            },
+            'pickup_time': ride_model.pickup_time,
         })
 
     return jsonify({
@@ -205,16 +206,14 @@ def fetch_rides(data):
 @app.post('/order')
 @jwt_required()
 @use_args({
-    'vehicle_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
-    'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
-    'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
-    'pickup_datetime': fields.DateTime(format='%Y-%m-%dT%H:%M', required=True, error_messages={'required': 'The pickup_datetime field is required'})
+    'ride_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
 }, location='json')
 def create_order(data):
 
     user = get_jwt_identity()
 
     ride = Ride.query.filter_by(
+<<<<<<< HEAD
         id=data['vehicle_id']).first()
 
     if ride:
@@ -233,6 +232,16 @@ def create_order(data):
         pickup_location=data['pickup_location'],
         pickup_datetime=data['pickup_datetime'],
         destination=data['destination'],
+=======
+        id=data['ride_id']).first()
+
+    if not ride:
+        return jsonify({'message': 'Invalid ride ID'}), 400
+
+    order = Order(
+        user_id=user['user_id'],
+        ride_id=data['ride_id'],
+>>>>>>> 630d7d6a8b4eab049f3e6fc82e06acca54718c47
     )
     db.session.add(order)
     db.session.commit()
@@ -244,25 +253,33 @@ def create_order(data):
 def get_user_orders():
     user = get_jwt_identity()
 
-    order_models = Order.query.filter_by(user_id=user['user_id']).all()
+    order_models = (
+        Order.query
+        .filter_by(user_id=user['user_id'])
+        .order_by(Order.created_at)
+        .all()
+    )
     orders = []
 
     for order_model in order_models:
         orders.append({
             'id': order_model.id,
-            'pickup_location': order_model.pickup_location,
-            'destination': order_model.destination,
-            'pickup_datetime': order_model.pickup_datetime,
-            'amount': order_model.amount,
-            'comfortability': order_model.comfortability,
+            'pickup_location': order_model.ride.pickup_location,
+            'destination': order_model.ride.destination,
+            'pickup_time': order_model.ride.pickup_time,
+            'amount': order_model.ride.amount,
+            'pickup_date': order_model.ride.pickup_date,
             'vehicle': {
-                'id': order_model.vehicle.id,
-                'make': order_model.vehicle.make,
-                'model': order_model.vehicle.make,
-                'license_plate': order_model.vehicle.license_plate,
+                'id': order_model.ride.vehicle.id,
+                'make': order_model.ride.vehicle.make,
+                'model': order_model.ride.vehicle.make,
+                'license_plate': order_model.ride.vehicle.license_plate,
+                'comfortability': order_model.ride.vehicle.comfortability,
             },
             'status': order_model.status,
         })
+
+        orders[-1]['pickup_date'] = orders[-1]['pickup_date'].isoformat()
 
     return jsonify({
         'data': {'orders': orders},
