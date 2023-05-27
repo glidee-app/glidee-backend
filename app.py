@@ -175,6 +175,7 @@ def fetch_rides(data):
         .filter(Ride.pickup_date == data['pickup_date'])
         .filter(Ride.pickup_location == data['pickup_location'])
         .filter(Ride.destination == data['destination'])
+        .filter(Ride.is_booked == False)
         .all()
     )
 
@@ -213,18 +214,22 @@ def create_order(data):
 
     user = get_jwt_identity()
 
-    vehicle = Vehicle.query.filter_by(
+    ride = Ride.query.filter_by(
         id=data['vehicle_id']).first()
 
-    if not vehicle:
+    if ride:
+        ride.is_available = False
+        db.session.commit()
+
+    else:
         return jsonify({'message': 'Invalid vehicle ID'}), 400
 
     order = Order(
         user_id=user['user_id'],
-        driver_id=vehicle.driver_id,
-        vehicle_id=vehicle.id,
-        amount=vehicle.amount,
-        comfortability=vehicle.comfortability,
+        driver_id=ride.driver_id,
+        vehicle_id=ride.id,
+        amount=ride.amount,
+        comfortability=ride.comfortability,
         pickup_location=data['pickup_location'],
         pickup_datetime=data['pickup_datetime'],
         destination=data['destination'],
@@ -268,21 +273,32 @@ def get_user_orders():
 @app.post('/cancel_order')
 @jwt_required()
 @use_args({
+    'vehicle_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
     'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='json')
 def cancel_order(data):
     user = get_jwt_identity()
+    id=data['order_id']
+    vehicle_id = data['vehicle_id']
+    user_id=user['user_id']
 
     order = Order.query.filter_by(
-        id=data['order_id'],
-        user_id=user['user_id']
+        id=id,
+        vehicle_id = vehicle_id,
+        user_id = user_id
     ).first()
-    if not order:
+
+    if order:
+        ride = Ride.query.filter_by(vehicle_id=vehicle_id)
+        ride.is_booked = True
+        order.status = 0  # 0 - cancelled, 1 - active.
+        db.session.commit()
+        return jsonify({'message': 'Order cancelled successfully'}), 200
+
+    else:
         return jsonify({'message': 'Invalid order ID'}), 400
 
-    order.status = 0  # 0 - cancelled, 1 - active.
-    db.session.commit()
+    
 
-    return jsonify({'message': 'Order cancelled successfully'}), 200
 
 
 @jwt.expired_token_loader

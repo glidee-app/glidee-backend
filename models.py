@@ -87,6 +87,8 @@ class Ride(db.Model):
     destination = db.Column(db.String(50), nullable=False)
     pickup_date = db.Column(db.Date, nullable=False)
     pickup_time = db.Column(db.String(50), nullable=False)
+    is_booked = db.Column(db.Boolean, nullable = False, default = True)
+    available_seats = db.Column(db.Integer, nullable=False)
     orders = db.relationship(
         'Order', back_populates='ride', foreign_keys="Order.ride_id", lazy=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
