@@ -175,6 +175,7 @@ def fetch_rides(data):
         .filter(Ride.pickup_date == data['pickup_date'])
         .filter(Ride.pickup_location == data['pickup_location'])
         .filter(Ride.destination == data['destination'])
+        .filter(Ride.is_booked == False)
         .all()
     )
 
@@ -217,10 +218,13 @@ def create_order(data):
     if not ride:
         return jsonify({'message': 'Invalid ride ID'}), 400
 
+    ride.is_booked == True
+    
     order = Order(
         user_id=user['user_id'],
         ride_id=data['ride_id'],
     )
+
     db.session.add(order)
     db.session.commit()
     return jsonify({'message': 'Order created successfully'}), 201
