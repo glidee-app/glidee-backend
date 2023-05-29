@@ -219,7 +219,7 @@ def create_order(data):
         return jsonify({'message': 'Invalid ride ID'}), 400
 
     ride.is_booked == True
-    
+
     order = Order(
         user_id=user['user_id'],
         ride_id=data['ride_id'],
@@ -272,16 +272,26 @@ def get_user_orders():
 @app.post('/cancel_order')
 @jwt_required()
 @use_args({
-    'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'})}, location='json')
+    'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'}),
+    'ride_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'})
+    }, location='json')
+
+
 def cancel_order(data):
     user = get_jwt_identity()
-
+    
+    ride_id = data['ride_id']
     order = Order.query.filter_by(
         id=data['order_id'],
         user_id=user['user_id']
     ).first()
+
     if not order:
         return jsonify({'message': 'Invalid order ID'}), 400
+
+    ride = Ride.query.get(ride_id)
+    if ride: 
+        ride.is_booked = False # make ride available again so it can be booked
 
     order.status = 0  # 0 - cancelled, 1 - active.
     db.session.commit()
