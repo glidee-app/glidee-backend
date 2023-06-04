@@ -39,6 +39,7 @@ def index():
     'password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
     'password_confirm': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
 }, location='json')
+
 def signup(data):
 
     if data['password'] != data['password_confirm']:
@@ -205,9 +206,11 @@ def fetch_rides(data):
 
 @app.post('/order')
 @jwt_required()
+
 @use_args({
     'ride_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
 }, location='json')
+
 def create_order(data):
 
     user = get_jwt_identity()
@@ -230,38 +233,48 @@ def create_order(data):
     return jsonify({'message': 'Order created successfully'}), 201
 
 
-@app.get('/orders')
+@app.get('/order_history')
 @jwt_required()
-def get_user_orders():
+
+@use_args({
+    'status': fields.Str(validate=validate.OneOf(['upcoming_trips', 'completed_trips', 'cancelled_trips']), required=True, error_messages={'required': 'The status field is required'})
+}, location='query')
+
+def get_user_orders(data):
+    order_status= data['status']
+
     user = get_jwt_identity()
+
 
     order_models = (
         Order.query
         .filter_by(user_id=user['user_id'])
+        .filter_by(status = order_status)
         .order_by(Order.created_at)
         .all()
     )
     orders = []
 
     for order_model in order_models:
-        orders.append({
-            'id': order_model.id,
-            'pickup_location': order_model.ride.pickup_location,
-            'destination': order_model.ride.destination,
-            'pickup_time': order_model.ride.pickup_time,
-            'amount': order_model.ride.amount,
-            'pickup_date': order_model.ride.pickup_date,
-            'vehicle': {
-                'id': order_model.ride.vehicle.id,
-                'make': order_model.ride.vehicle.make,
-                'model': order_model.ride.vehicle.make,
-                'license_plate': order_model.ride.vehicle.license_plate,
-                'comfortability': order_model.ride.vehicle.comfortability,
-            },
-            'status': order_model.status,
-        })
+        if order_model.status == order_status:
+            orders.append({
+                'id': order_model.id,
+                'pickup_location': order_model.ride.pickup_location,
+                'destination': order_model.ride.destination,
+                'pickup_time': order_model.ride.pickup_time,
+                'amount': order_model.ride.amount,
+                'pickup_date': order_model.ride.pickup_date,
+                'vehicle': {
+                    'id': order_model.ride.vehicle.id,
+                    'make': order_model.ride.vehicle.make,
+                    'model': order_model.ride.vehicle.make,
+                    'license_plate': order_model.ride.vehicle.license_plate,
+                    'comfortability': order_model.ride.vehicle.comfortability,
+                },
+                'status': order_model.status,
+            })
 
-        orders[-1]['pickup_date'] = orders[-1]['pickup_date'].isoformat()
+            orders[-1]['pickup_date'] = orders[-1]['pickup_date'].isoformat()
 
     return jsonify({
         'data': {'orders': orders},
