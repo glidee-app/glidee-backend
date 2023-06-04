@@ -204,7 +204,7 @@ def fetch_rides(data):
     }), 200
 
 
-@app.post('/order')
+@app.post('/create_order')
 @jwt_required()
 
 @use_args({
