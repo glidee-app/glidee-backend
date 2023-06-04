@@ -233,6 +233,44 @@ def create_order(data):
     db.session.commit()
     return jsonify({'message': 'Order created successfully'}), 201
 
+@app.post('/cancel_order')
+@jwt_required()
+@use_args({
+    'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'}),
+    'ride_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'})
+    }, location='json')
+
+
+def cancel_order(data):
+    user = get_jwt_identity()
+    
+    ride_id = data['ride_id']
+    order = Order.query.filter_by(
+        id=data['order_id'],
+        user_id=user['user_id']
+    ).first()
+
+    if not order:
+        return jsonify({'message': 'Invalid order ID'}), 400
+
+    ride = Ride.query.get(ride_id)
+    if ride: 
+        ride.is_booked = False # make ride available again so it can be booked
+
+    order.status = 'cancelled_order'  
+    db.session.commit()
+
+    return jsonify({'message': 'Order cancelled successfully'}), 200
+
+
+@jwt.expired_token_loader
+@jwt.invalid_token_loader
+@jwt.unauthorized_loader
+def my_expired_token_callback(jwt_header, jwt_value=None):
+    return jsonify({
+        'message': 'Unauthorized! Please login and try again.'
+    }), 401
+
 
 @app.get('/order_history')
 @jwt_required()
@@ -281,46 +319,6 @@ def get_user_orders(data):
         'data': {'orders': orders},
         'message': 'Orders fetched successfully'
     }), 200
-
-
-@app.post('/cancel_order')
-@jwt_required()
-@use_args({
-    'order_id': fields.Int(validate=validate.Range(min=1), required=True, error_messages={'required': 'The order_id field is required'}),
-    'ride_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'})
-    }, location='json')
-
-
-def cancel_order(data):
-    user = get_jwt_identity()
-    
-    ride_id = data['ride_id']
-    order = Order.query.filter_by(
-        id=data['order_id'],
-        user_id=user['user_id']
-    ).first()
-
-    if not order:
-        return jsonify({'message': 'Invalid order ID'}), 400
-
-    ride = Ride.query.get(ride_id)
-    if ride: 
-        ride.is_booked = False # make ride available again so it can be booked
-
-    order.status = 'cancelled_order'  
-    db.session.commit()
-
-    return jsonify({'message': 'Order cancelled successfully'}), 200
-
-
-@jwt.expired_token_loader
-@jwt.invalid_token_loader
-@jwt.unauthorized_loader
-def my_expired_token_callback(jwt_header, jwt_value=None):
-    return jsonify({
-        'message': 'Unauthorized! Please login and try again.'
-    }), 401
-
 
 @app.errorhandler(422)
 @app.errorhandler(400)
