@@ -54,6 +54,7 @@ class Vehicle(db.Model):
     model = db.Column(db.String(50), nullable=False)
     license_plate = db.Column(db.String(20), nullable=False)
     comfortability = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
     driver_id = db.Column(db.Integer, db.ForeignKey(
         'drivers.id'), nullable=False)
     driver = db.relationship('Driver', back_populates='vehicles', lazy=True)
@@ -82,7 +83,6 @@ class Ride(db.Model):
     vehicle_id = db.Column(db.Integer, db.ForeignKey(
         'vehicles.id'), nullable=False)
     vehicle = db.relationship('Vehicle', foreign_keys="Ride.vehicle_id")
-    amount = db.Column(db.Integer, nullable=False)
     pickup_location = db.Column(db.String(50), nullable=False)
     destination = db.Column(db.String(50), nullable=False)
     pickup_date = db.Column(db.Date, nullable=False)
