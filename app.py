@@ -226,6 +226,7 @@ def create_order(data):
     order = Order(
         user_id=user['user_id'],
         ride_id=data['ride_id'],
+        status = 'upcoming_trip'
     )
 
     db.session.add(order)
@@ -237,7 +238,7 @@ def create_order(data):
 @jwt_required()
 
 @use_args({
-    'status': fields.Str(validate=validate.OneOf(['upcoming_trips', 'completed_trips', 'cancelled_trips']), required=True, error_messages={'required': 'The status field is required'})
+    'status': fields.Str(validate=validate.OneOf(['upcoming_trip', 'completed_trip', 'cancelled_trip']), required=True, error_messages={'required': 'The status field is required'})
 }, location='query')
 
 def get_user_orders(data):
@@ -306,7 +307,7 @@ def cancel_order(data):
     if ride: 
         ride.is_booked = False # make ride available again so it can be booked
 
-    order.status = 0  # 0 - cancelled, 1 - active.
+    order.status = 'cancelled_order'  
     db.session.commit()
 
     return jsonify({'message': 'Order cancelled successfully'}), 200
