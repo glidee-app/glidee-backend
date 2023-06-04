@@ -43,256 +43,256 @@ This code represents a Flask application for Glidee ride-hailing service. It pro
 
 ## `/signup`
 
-    This endpoint allows users to register with the application by providing their username, email, and password.
+This endpoint allows users to register with the application by providing their username, email, and password.
 
-    ### Create a new user
+### Create a new user
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter           | Type   | Required | Description                  |
-    |---------------------|--------|----------|------------------------------|
-    | `email`             | string | Yes      | The user's email address     |
-    | `first_name`        | string | Yes      | The user's first name        |
-    | `last_name`         | string | Yes      | The user's last name         |
-    | `password`          | string | Yes      | The user's password          |
-    | `password_confirm`  | string | Yes      | The password confirmation    |
+| Parameter           | Type   | Required | Description                  |
+|---------------------|--------|----------|------------------------------|
+| `email`             | string | Yes      | The user's email address     |
+| `first_name`        | string | Yes      | The user's first name        |
+| `last_name`         | string | Yes      | The user's last name         |
+| `password`          | string | Yes      | The user's password          |
+| `password_confirm`  | string | Yes      | The password confirmation    |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                            |
-    |-------------|----------------------------------------|
-    | `201`       | User registered successfully.           |
-    | `400`       | - The passwords do not match.<br/>- User with email already exists. |
+| Status Code | Description                            |
+|-------------|----------------------------------------|
+| `201`       | User registered successfully.           |
+| `400`       | - The passwords do not match.<br/>- User with email already exists. |
 
 ## `/signin`
 
-    This endpoint allows registered users to sign in by providing their username or email and password.
+This endpoint allows registered users to sign in by providing their username or email and password.
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter  | Type   | Required | Description                   |
-    |------------|--------|----------|-------------------------------|
-    | `email`    | string | Yes      | The user's email address      |
-    | `password` | string | Yes      | The user's password           |
+| Parameter  | Type   | Required | Description                   |
+|------------|--------|----------|-------------------------------|
+| `email`    | string | Yes      | The user's email address      |
+| `password` | string | Yes      | The user's password           |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                     |
-    |-------------|---------------------------------|
-    | `201`       | User logged in successfully.    |
-    | `400`       | Invalid login credentials.      |
-    | `500`       | Error occurred.                 |
+| Status Code | Description                     |
+|-------------|---------------------------------|
+| `201`       | User logged in successfully.    |
+| `400`       | Invalid login credentials.      |
+| `500`       | Error occurred.                 |
 
 ## `/forgot_password`
 
-    This endpoint allows users to initiate the password reset process by providing their email address.
+This endpoint allows users to initiate the password reset process by providing their email address.
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter  | Type   | Required | Description                  |
-    |------------|--------|----------|------------------------------|
-    | `email`    | string | Yes      | The user's email address     |
+| Parameter  | Type   | Required | Description                  |
+|------------|--------|----------|------------------------------|
+| `email`    | string | Yes      | The user's email address     |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                          |
-    |-------------|------------------------------------------------------|
-    | `200`       | An email containing instructions to reset your password has been sent. |
-    | `400`       | Invalid login credentials.                           |
+| Status Code | Description                                          |
+|-------------|------------------------------------------------------|
+| `200`       | An email containing instructions to reset your password has been sent. |
+| `400`       | Invalid login credentials.                           |
 
 ## `/reset_password`
 
-    This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.
+This endpoint allows users to reset their password by providing their email, token sent to them, new password, and confirm password.
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter          | Type   | Required | Description                                              |
-    |--------------------|--------|----------|----------------------------------------------------------|
-    | `email`            | string | Yes      | The user's email address                                 |
-    | `token`            | string | Yes      | The token sent to the user's email address               |
-    | `new_password`     | string | Yes      | The user's new password                                  |
-    | `confirm_password` | string | Yes      | The user's password confirmation                         |
+| Parameter          | Type   | Required | Description                                              |
+|--------------------|--------|----------|----------------------------------------------------------|
+| `email`            | string | Yes      | The user's email address                                 |
+| `token`            | string | Yes      | The token sent to the user's email address               |
+| `new_password`     | string | Yes      | The user's new password                                  |
+| `confirm_password` | string | Yes      | The user's password confirmation                         |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                                |
-    |-------------|------------------------------------------------------------|
-    | `201`       | Password successfully changed.                             |
-    | `400`       | - The passwords do not match.<br/>- This string cannot be empty.<br/>- The passwords you entered do not match. Please make sure your passwords match. |
-    | `401`       | Invalid or expired token.                                  |
-    | `500`       | Error occurred.                                            |
+| Status Code | Description                                                |
+|-------------|------------------------------------------------------------|
+| `201`       | Password successfully changed.                             |
+| `400`       | - The passwords do not match.<br/>- This string cannot be empty.<br/>- The passwords you entered do not match. Please make sure your passwords match. |
+| `401`       | Invalid or expired token.                                  |
+| `500`       | Error occurred.                                            |
 
 ## `/order_history`
 
-    This endpoint is used to create a new order.
+This endpoint is used to create a new order.
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter         | Type     | Required | Description                                              |
-    |-------------------|----------|----------|----------------------------------------------------------|
-    | `pickup_location` | string   | Yes      | The pickup location of the order                         |
-    | `destination`     | string   | Yes      | The destination of the order                              |
-    | `comfortability`  | string   | Yes      | The comfortability level of the order (shared, standard, Luxury) |
-    | `pickup_datetime` | datetime | Yes      | The pickup date and time of the order                     |
-    | `user_email`      | string   | Yes      | The email of the user placing the order                   |
-    | `amount`          | string   | Yes      | The amount of the order (3000, 5000, 10000)               |
+| Parameter         | Type     | Required | Description                                              |
+|-------------------|----------|----------|----------------------------------------------------------|
+| `pickup_location` | string   | Yes      | The pickup location of the order                         |
+| `destination`     | string   | Yes      | The destination of the order                              |
+| `comfortability`  | string   | Yes      | The comfortability level of the order (shared, standard, Luxury) |
+| `pickup_datetime` | datetime | Yes      | The pickup date and time of the order                     |
+| `user_email`      | string   | Yes      | The email of the user placing the order                   |
+| `amount`          | string   | Yes      | The amount of the order (3000, 5000, 10000)               |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                            |
-    |-------------|--------------------------------------------------------|
-    | `200`       | Returns a list of available vehicles for the requested comfortability. |
+| Status Code | Description                                            |
+|-------------|--------------------------------------------------------|
+| `200`       | Returns a list of available vehicles for the requested comfortability. |
 
 ## `/cancel_order`
 
-    This endpoint is used to cancel an existing order.
+This endpoint is used to cancel an existing order.
 
-    **HTTP Method**: `DELETE`
+**HTTP Method**: `DELETE`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter  | Type   | Required | Description                          |
-    |------------|--------|----------|--------------------------------------|
-    | `order_id` | string | Yes      | The ID of the order to be cancelled   |
+| Parameter  | Type   | Required | Description                          |
+|------------|--------|----------|--------------------------------------|
+| `order_id` | string | Yes      | The ID of the order to be cancelled   |
 
-    **HTTP Response Code:**
+**HTTP Response Code:**
 
-    | Status Code | Description                                          |
-    |-------------|------------------------------------------------------|
-    | `200`       | Returns a success message if the order was cancelled successfully. |
+| Status Code | Description                                          |
+|-------------|------------------------------------------------------|
+| `200`       | Returns a success message if the order was cancelled successfully. |
 
 
 
 ## `/seed_drivers`
 
-    This endpoint is used to seed drivers into the database.
+This endpoint is used to seed drivers into the database.
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter  | Type    | Required | Description                                            |
-    |------------|---------|----------|--------------------------------------------------------|
-    | `drivers`  | list    | Yes      | A list of dictionaries containing driver information.   |
+| Parameter  | Type    | Required | Description                                            |
+|------------|---------|----------|--------------------------------------------------------|
+| `drivers`  | list    | Yes      | A list of dictionaries containing driver information.   |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                                |
-    |-------------|------------------------------------------------------------|
-    | `200`       | Drivers seeded successfully.                                |
-    | `500`       | Error occurred while seeding drivers.                       |
+| Status Code | Description                                                |
+|-------------|------------------------------------------------------------|
+| `200`       | Drivers seeded successfully.                                |
+| `500`       | Error occurred while seeding drivers.                       |
 
 
 
 
 ## `/seed_vehicles`
 
-    This endpoint is used to seed vehicles into the database.
+This endpoint is used to seed vehicles into the database.
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter  | Type    | Required | Description                                            |
-    |------------|---------|----------|--------------------------------------------------------|
-    | `vehicles` | list    | Yes      | A list of dictionaries containing vehicle information.  |
+| Parameter  | Type    | Required | Description                                            |
+|------------|---------|----------|--------------------------------------------------------|
+| `vehicles` | list    | Yes      | A list of dictionaries containing vehicle information.  |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                                |
-    |-------------|------------------------------------------------------------|
-    | `200`       | Vehicles seeded successfully.                               |
-    | `500`       | Error occurred while seeding vehicles.                      |
+| Status Code | Description                                                |
+|-------------|------------------------------------------------------------|
+| `200`       | Vehicles seeded successfully.                               |
+| `500`       | Error occurred while seeding vehicles.                      |
 
 
 
 
 ## `/fetch_rides`
 
-    This endpoint is used to fetch available rides based on the provided parameters.
+This endpoint is used to fetch available rides based on the provided parameters.
 
-    **HTTP Method**: `GET`
+**HTTP Method**: `GET`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter           | Type   | Required | Description                                   |
-    |---------------------|--------|----------|-----------------------------------------------|
-    | `comfortability`    | string | Yes      | The comfortability level of the ride           |
-    | `pickup_date`       | string | Yes      | The pickup date of the ride                    |
-    | `pickup_location`   | string | Yes      | The pickup location of the ride                |
-    | `destination`       | string | Yes      | The destination of the ride                    |
+| Parameter           | Type   | Required | Description                                   |
+|---------------------|--------|----------|-----------------------------------------------|
+| `comfortability`    | string | Yes      | The comfortability level of the ride           |
+| `pickup_date`       | string | Yes      | The pickup date of the ride                    |
+| `pickup_location`   | string | Yes      | The pickup location of the ride                |
+| `destination`       | string | Yes      | The destination of the ride                    |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                              |
-    |-------------|----------------------------------------------------------|
-    | `200`       | Returns a list of available rides for the requested criteria. |
+| Status Code | Description                                              |
+|-------------|----------------------------------------------------------|
+| `200`       | Returns a list of available rides for the requested criteria. |
 
 
 
 ## `/create_order`
-    This endpoint is used to create a new order.
+This endpoint is used to create a new order.
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter    | Type   | Required | Description                                |
-    |--------------|--------|----------|--------------------------------------------|
-    | `ride_id`    | int    | Yes      | The ID of the ride to be booked            |
+| Parameter    | Type   | Required | Description                                |
+|--------------|--------|----------|--------------------------------------------|
+| `ride_id`    | int    | Yes      | The ID of the ride to be booked            |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                            |
-    |-------------|--------------------------------------------------------|
-    | `201`       | Order created successfully.                             |
-    | `400`       | Invalid ride ID.                                       |
+| Status Code | Description                                            |
+|-------------|--------------------------------------------------------|
+| `201`       | Order created successfully.                             |
+| `400`       | Invalid ride ID.                                       |
 
 
 ## `/cancel_order`
-    This endpoint is used to cancel an existing order.
+This endpoint is used to cancel an existing order.
 
-    **HTTP Method**: `POST`
+**HTTP Method**: `POST`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter    | Type   | Required | Description                                |
-    |--------------|--------|----------|--------------------------------------------|
-    | `order_id`   | int    | Yes      | The ID of the order to be cancelled         |
-    | `ride_id`    | int    | Yes      | The ID of the ride associated with the order|
+| Parameter    | Type   | Required | Description                                |
+|--------------|--------|----------|--------------------------------------------|
+| `order_id`   | int    | Yes      | The ID of the order to be cancelled         |
+| `ride_id`    | int    | Yes      | The ID of the ride associated with the order|
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                            |
-    |-------------|--------------------------------------------------------|
-    | `200`       | Order cancelled successfully.                          |
-    | `400`       | Invalid order ID.                                      |
+| Status Code | Description                                            |
+|-------------|--------------------------------------------------------|
+| `200`       | Order cancelled successfully.                          |
+| `400`       | Invalid order ID.                                      |
 
 
 ## `/order_history`
-    This endpoint is used to retrieve the order history for a user.
+This endpoint is used to retrieve the order history for a user.
 
-    **HTTP Method**: `GET`
+**HTTP Method**: `GET`
 
-    **Request Parameters:**
+**Request Parameters:**
 
-    | Parameter  | Type   | Required | Description                                      |
-    |------------|--------|----------|--------------------------------------------------|
-    | `user_id`  | int    | Yes      | The ID of the user to retrieve the order history |
+| Parameter  | Type   | Required | Description                                      |
+|------------|--------|----------|--------------------------------------------------|
+| `user_id`  | int    | Yes      | The ID of the user to retrieve the order history |
 
-    **HTTP Response Codes:**
+**HTTP Response Codes:**
 
-    | Status Code | Description                                            |
-    |-------------|--------------------------------------------------------|
-    | `200`       | Returns the order history for the specified user ID.   |
-    | `400`       | Invalid user ID.                                       |
+| Status Code | Description                                            |
+|-------------|--------------------------------------------------------|
+| `200`       | Returns the order history for the specified user ID.   |
+| `400`       | Invalid user ID.                                       |
