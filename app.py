@@ -173,8 +173,6 @@ def fetch_rides(data):
         Ride.query.join(Ride.vehicle)
         .filter(Vehicle.comfortability == data['comfortability'])
         .filter(Ride.pickup_date == data['pickup_date'])
-        .filter(Ride.pickup_location == data['pickup_location'])
-        .filter(Ride.destination == data['destination'])
         .filter(Ride.is_booked == False)
         .all()
     )
