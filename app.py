@@ -352,6 +352,41 @@ def seed_vehicles():
 
     return jsonify({'message': 'Vehicles seeded successfully.'}), 200
 
+@app.route('/seed_rides', methods=["GET", "POST"])
+def seed_rides():
+    try:
+        with open('rides.json') as file:
+            rides_data = json.load(file)
+
+        for ride_data in rides_data:
+            vehicle_id = ride_data['vehicle_id']
+            pickup_location = ride_data['pickup_location']
+            destination = ride_data['destination']
+            pickup_date = ride_data['pickup_date']
+            pickup_time = ride_data['pickup_time']
+            is_booked = ride_data['is_booked']
+            available_seats = ride_data['available_seats']
+
+            ride = Ride(
+                vehicle_id=vehicle_id,
+                pickup_location=pickup_location,
+                destination=destination,
+                pickup_date=pickup_date,
+                pickup_time=pickup_time,
+                is_booked=is_booked,
+                available_seats=available_seats
+            )
+            db.session.add(ride)
+
+        db.session.commit()
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'Error occurred while seeding rides. {e}'}), 500
+
+    return jsonify({'message': 'Rides seeded successfully.'}), 200
+
+
 @jwt.expired_token_loader
 @jwt.invalid_token_loader
 @jwt.unauthorized_loader

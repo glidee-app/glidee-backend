@@ -1,0 +1,265 @@
+[
+    {
+      "vehicle_id": 7,
+      "pickup_location": "Harmony",
+      "destination": "Cele",
+      "pickup_date": "2023-06-06",
+      "pickup_time": "10:00 AM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 12,
+      "pickup_location": "Camp",
+      "destination": "Accord",
+      "pickup_date": "2023-06-07",
+      "pickup_time": "02:30 PM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+      "vehicle_id": 5,
+      "pickup_location": "Gate",
+      "destination": "Cele",
+      "pickup_date": "2023-06-08",
+      "pickup_time": "09:15 AM",
+      "is_booked": false,
+      "available_seats": 2
+    },
+    {
+      "vehicle_id": 10,
+      "pickup_location": "Oluwo",
+      "destination": "Funis",
+      "pickup_date": "2023-06-09",
+      "pickup_time": "05:45 PM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 3,
+      "pickup_location": "Gate",
+      "destination": "Accord",
+      "pickup_date": "2023-06-10",
+      "pickup_time": "08:30 AM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+      "vehicle_id": 8,
+      "pickup_location": "Isolu",
+      "destination": "Cele",
+      "pickup_date": "2023-06-11",
+      "pickup_time": "01:45 PM",
+      "is_booked": false,
+      "available_seats": 2
+    },
+    {
+      "vehicle_id": 11,
+      "pickup_location": "Harmony",
+      "destination": "Gate",
+      "pickup_date": "2023-06-12",
+      "pickup_time": "10:30 AM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 2,
+      "pickup_location": "Camp",
+      "destination": "Accord",
+      "pickup_date": "2023-06-13",
+      "pickup_time": "03:15 PM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+      "vehicle_id": 6,
+      "pickup_location": "Motion Park",
+      "destination": "Funis",
+      "pickup_date": "2023-06-14",
+      "pickup_time": "09:45 AM",
+      "is_booked": false,
+      "available_seats": 2
+    },
+    {
+      "vehicle_id": 14,
+      "pickup_location": "Oluwo",
+      "destination": "Gate",
+      "pickup_date": "2023-06-15",
+      "pickup_time": "06:30 PM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 9,
+      "pickup_location": "Gate",
+      "destination": "Cele",
+      "pickup_date": "2023-06-16",
+      "pickup_time": "08:00 AM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+      "vehicle_id": 1,
+      "pickup_location": "Accord",
+      "destination": "Isolu",
+      "pickup_date": "2023-06-17",
+      "pickup_time": "02:15 PM",
+      "is_booked": false,
+      "available_seats": 2
+    },
+    {
+      "vehicle_id": 13,
+      "pickup_location": "Funis",
+      "destination": "Camp",
+      "pickup_date": "2023-06-18",
+      "pickup_time": "11:30 AM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 4,
+      "pickup_location": "Motion Park",
+      "destination": "Gate",
+      "pickup_date": "2023-06-19",
+      "pickup_time": "04:45 PM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+      "vehicle_id": 10,
+      "pickup_location": "Harmony",
+      "destination": "Cele",
+      "pickup_date": "2023-06-20",
+      "pickup_time": "10:30 AM",
+      "is_booked": false,
+      "available_seats": 2
+    },
+    {
+      "vehicle_id": 7,
+      "pickup_location": "Camp",
+      "destination": "Accord",
+      "pickup_date": "2023-06-21",
+      "pickup_time": "03:45 PM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 11,
+      "pickup_location": "Gate",
+      "destination": "Oluwo",
+      "pickup_date": "2023-06-22",
+      "pickup_time": "09:15 AM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+      "vehicle_id": 3,
+      "pickup_location": "Cele",
+      "destination": "Funis",
+      "pickup_date": "2023-06-23",
+      "pickup_time": "01:30 PM",
+      "is_booked": false,
+      "available_seats": 2
+    },
+    {
+      "vehicle_id": 13,
+      "pickup_location": "Harmony",
+      "destination": "Gate",
+      "pickup_date": "2023-06-24",
+      "pickup_time": "10:45 AM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 5,
+      "pickup_location": "Camp",
+      "destination": "Accord",
+      "pickup_date": "2023-06-25",
+      "pickup_time": "04:00 PM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+      "vehicle_id": 9,
+      "pickup_location": "Motion Park",
+      "destination": "Funis",
+      "pickup_date": "2023-06-26",
+      "pickup_time": "11:15 AM",
+      "is_booked": false,
+      "available_seats": 2
+    },
+    {
+      "vehicle_id": 6,
+      "pickup_location": "Oluwo",
+      "destination": "Gate",
+      "pickup_date": "2023-06-27",
+      "pickup_time": "06:30 PM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 2,
+      "pickup_location": "Gate",
+      "destination": "Cele",
+      "pickup_date": "2023-06-28",
+      "pickup_time": "09:45 AM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+      "vehicle_id": 12,
+      "pickup_location": "Camp",
+      "destination": "Accord",
+      "pickup_date": "2023-06-29",
+      "pickup_time": "03:00 PM",
+      "is_booked": false,
+      "available_seats": 2
+    },
+    {
+      "vehicle_id": 8,
+      "pickup_location": "Motion Park",
+      "destination": "Funis",
+      "pickup_date": "2023-06-30",
+      "pickup_time": "10:15 AM",
+      "is_booked": false,
+      "available_seats": 4
+    },
+    {
+      "vehicle_id": 1,
+      "pickup_location": "Harmony",
+      "destination": "Gate",
+      "pickup_date": "2023-07-01",
+      "pickup_time": "04:30 PM",
+      "is_booked": false,
+      "available_seats": 3
+    },
+    {
+        "vehicle_id": 9,
+        "pickup_location": "Harmony",
+        "destination": "Cele",
+        "pickup_date": "2023-06-06",
+        "pickup_time": "10:00 AM",
+        "is_booked": false,
+        "available_seats": 4
+    },
+    {
+        "vehicle_id": 5,
+        "pickup_location": "Camp",
+        "destination": "Isolu",
+        "pickup_date": "2023-06-07",
+        "pickup_time": "02:30 PM",
+        "is_booked": false,
+        "available_seats": 3
+    },
+    {
+        "vehicle_id": 12,
+        "pickup_location": "Motion Park",
+        "destination": "Gate",
+        "pickup_date": "2023-06-08",
+        "pickup_time": "09:15 AM",
+        "is_booked": false,
+        "available_seats": 2
+    }
+      
+  ]
+  
