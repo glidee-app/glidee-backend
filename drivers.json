@@ -1,0 +1,56 @@
+[
+    {
+        "details": [
+            {
+                "name": "Michael Jordans",
+                "phone_number": "1234567890",
+                "email": "michaeljordans@example.com"
+            },
+            {
+                "name": "Jane Smith",
+                "phone_number": "9876543210",
+                "email": "janesmith@example.com"
+            },
+            {
+                "name": "Michael Johnson",
+                "phone_number": "5678901234",
+                "email": "michaeljohnson@example.com"
+            },
+            {
+                "name": "Emily Davis",
+                "phone_number": "4321098765",
+                "email": "emilydavis@example.com"
+            },
+            {
+                "name": "Daniel Wilson",
+                "phone_number": "9876543210",
+                "email": "danielwilson@example.com"
+            },
+            {
+                "name": "Sarah Brown",
+                "phone_number": "1234567890",
+                "email": "sarahbrown@example.com"
+            },
+            {
+                "name": "Christopher Lee",
+                "phone_number": "9876543210",
+                "email": "christopherlee@example.com"
+            },
+            {
+                "name": "Jessica Miller",
+                "phone_number": "5678901234",
+                "email": "jessicamiller@example.com"
+            },
+            {
+                "name": "Matthew Taylor",
+                "phone_number": "4321098765",
+                "email": "matthewtaylor@example.com"
+            },
+            {
+                "name": "Olivia Anderson",
+                "phone_number": "9876543210",
+                "email": "olivianderson@example.com"
+            }
+        ]
+    }
+]

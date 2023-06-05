@@ -1,0 +1,114 @@
+[
+    {
+    "make": "Toyota",
+    "model": "Camry",
+    "license_plate": "ABC123",
+    "comfortability": "Standard",
+    "amount": 60,
+    "driver_id": 1
+    },
+    {
+    "make": "Honda",
+    "model": "Accord",
+    "license_plate": "XYZ456",
+    "comfortability": "Shared",
+    "amount": 40,
+    "driver_id": 2
+    },
+    {
+    "make": "Ford",
+    "model": "F-150",
+    "license_plate": "DEF789",
+    "comfortability": "Shared",
+    "amount": 50,
+    "driver_id": 3
+    },
+    {
+    "make": "Chevrolet",
+    "model": "Cruze",
+    "license_plate": "GHI012",
+    "comfortability": "Standard",
+    "amount": 80,
+    "driver_id": 4
+    },
+    {
+    "make": "BMW",
+    "model": "X5",
+    "license_plate": "JKL345",
+    "comfortability": "Standard",
+    "amount": 100,
+    "driver_id": 5
+    },
+    {
+    "make": "Nissan",
+    "model": "Altima",
+    "license_plate": "MNO678",
+    "comfortability": "Standard",
+    "amount": 70,
+    "driver_id": 6
+    },
+    {
+    "make": "Audi",
+    "model": "A4",
+    "license_plate": "PQR901",
+    "comfortability": "Standard",
+    "amount": 90,
+    "driver_id": 7
+    },
+    {
+    "make": "Volkswagen",
+    "model": "Golf",
+    "license_plate": "STU234",
+    "comfortability": "Standard",
+    "amount": 110,
+    "driver_id": 8
+    },
+    {
+    "make": "Mercedes-Benz",
+    "model": "C-Class",
+    "license_plate": "VWX567",
+    "comfortability": "Shared",
+    "amount": 30,
+    "driver_id": 9
+    },
+    {
+    "make": "Hyundai",
+    "model": "Elantra",
+    "license_plate": "YZA890",
+    "comfortability": "Shared",
+    "amount": 20,
+    "driver_id": 10
+    },
+    {
+    "make": "Chevrolet",
+    "model": "Malibu",
+    "license_plate": "BCD123",
+    "comfortability": "Standard",
+    "amount": 130,
+    "driver_id": 1
+    },
+    {
+    "make": "Honda",
+    "model": "Civic",
+    "license_plate": "EFG456",
+    "comfortability": "Standard",
+    "amount": 150,
+    "driver_id": 2
+    },
+    {
+    "make": "Toyota",
+    "model": "Corolla",
+    "license_plate": "HIJ789",
+    "comfortability": "Standard",
+    "amount": 170,
+    "driver_id": 3
+    },
+    {
+    "make": "BMW",
+    "model": "3 Series",
+    "license_plate": "KLM012",
+    "comfortability": "Standard",
+    "amount": 190,
+    "driver_id": 4
+    }
+        ]
