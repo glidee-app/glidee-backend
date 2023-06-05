@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from send_token import Token
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 import json
+from datetime import date
 import os
 
 
@@ -354,15 +355,19 @@ def seed_vehicles():
 
 @app.route('/seed_rides', methods=["GET", "POST"])
 def seed_rides():
+
     try:
         with open('rides.json') as file:
             rides_data = json.load(file)
 
         for ride_data in rides_data:
+
+            year, month, day = map(int, (ride_data['pickup_date']).split('-'))
+
             vehicle_id = ride_data['vehicle_id']
             pickup_location = ride_data['pickup_location']
-            destination = ride_data['destination']
-            pickup_date = ride_data['pickup_date']
+            destination = ride_data['destination']            
+            pickup_date = date(year, month, day)
             pickup_time = ride_data['pickup_time']
             is_booked = ride_data['is_booked']
             available_seats = ride_data['available_seats']
