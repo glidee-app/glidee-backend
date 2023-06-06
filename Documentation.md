@@ -130,91 +130,6 @@ This endpoint allows users to reset their password by providing their email, tok
 | `401`       | Invalid or expired token.                                  |
 | `500`       | Error occurred.                                            |
 
-## `/order_history`
-
-This endpoint is used to create a new order.
-
-**HTTP Method**: `POST`
-
-**Request Parameters:**
-
-| Parameter         | Type     | Required | Description                                              |
-|-------------------|----------|----------|----------------------------------------------------------|
-| `pickup_location` | string   | Yes      | The pickup location of the order                         |
-| `destination`     | string   | Yes      | The destination of the order                              |
-| `comfortability`  | string   | Yes      | The comfortability level of the order (shared, standard, Luxury) |
-| `pickup_datetime` | datetime | Yes      | The pickup date and time of the order                     |
-| `user_email`      | string   | Yes      | The email of the user placing the order                   |
-| `amount`          | string   | Yes      | The amount of the order (3000, 5000, 10000)               |
-
-**HTTP Response Codes:**
-
-| Status Code | Description                                            |
-|-------------|--------------------------------------------------------|
-| `200`       | Returns a list of available vehicles for the requested comfortability. |
-
-## `/cancel_order`
-
-This endpoint is used to cancel an existing order.
-
-**HTTP Method**: `DELETE`
-
-**Request Parameters:**
-
-| Parameter  | Type   | Required | Description                          |
-|------------|--------|----------|--------------------------------------|
-| `order_id` | string | Yes      | The ID of the order to be cancelled   |
-
-**HTTP Response Code:**
-
-| Status Code | Description                                          |
-|-------------|------------------------------------------------------|
-| `200`       | Returns a success message if the order was cancelled successfully. |
-
-
-
-## `/seed_drivers`
-
-This endpoint is used to seed drivers into the database.
-
-**HTTP Method**: `POST`
-
-**Request Parameters:**
-
-| Parameter  | Type    | Required | Description                                            |
-|------------|---------|----------|--------------------------------------------------------|
-| `drivers`  | list    | Yes      | A list of dictionaries containing driver information.   |
-
-**HTTP Response Codes:**
-
-| Status Code | Description                                                |
-|-------------|------------------------------------------------------------|
-| `200`       | Drivers seeded successfully.                                |
-| `500`       | Error occurred while seeding drivers.                       |
-
-
-
-
-## `/seed_vehicles`
-
-This endpoint is used to seed vehicles into the database.
-
-**HTTP Method**: `POST`
-
-**Request Parameters:**
-
-| Parameter  | Type    | Required | Description                                            |
-|------------|---------|----------|--------------------------------------------------------|
-| `vehicles` | list    | Yes      | A list of dictionaries containing vehicle information.  |
-
-**HTTP Response Codes:**
-
-| Status Code | Description                                                |
-|-------------|------------------------------------------------------------|
-| `200`       | Vehicles seeded successfully.                               |
-| `500`       | Error occurred while seeding vehicles.                      |
-
-
 
 
 ## `/fetch_rides`
@@ -296,3 +211,64 @@ This endpoint is used to retrieve the order history for a user.
 |-------------|--------------------------------------------------------|
 | `200`       | Returns the order history for the specified user ID.   |
 | `400`       | Invalid user ID.                                       |
+
+## `/seed_drivers`
+
+This endpoint is used to seed drivers into the database.
+
+**HTTP Method**: `POST`
+
+**Request Parameters:**
+
+| Parameter  | Type    | Required | Description                                            |
+|------------|---------|----------|--------------------------------------------------------|
+| `drivers`  | list    | Yes      | A list of dictionaries containing driver information.   |
+
+**HTTP Response Codes:**
+
+| Status Code | Description                                                |
+|-------------|------------------------------------------------------------|
+| `200`       | Drivers seeded successfully.                                |
+| `500`       | Error occurred while seeding drivers.                       |
+
+
+
+
+## `/seed_vehicles`
+
+This endpoint is used to seed vehicles into the database.
+
+**HTTP Method**: `POST`
+
+**Request Parameters:**
+
+| Parameter  | Type    | Required | Description                                            |
+|------------|---------|----------|--------------------------------------------------------|
+| `vehicles` | list    | Yes      | A list of dictionaries containing vehicle information.  |
+
+**HTTP Response Codes:**
+
+| Status Code | Description                                                |
+|-------------|------------------------------------------------------------|
+| `200`       | Vehicles seeded successfully.                               |
+| `500`       | Error occurred while seeding vehicles.                      |
+
+
+## `/seed_rides`
+
+This endpoint is used to seed rides into the database.
+
+**HTTP Method**: `POST`
+
+**Request Parameters:**
+
+| Parameter  | Type    | Required | Description                                            |
+|------------|---------|----------|--------------------------------------------------------|
+| `rides` | list    | Yes      | A list of dictionaries containing vehicle information.  |
+
+**HTTP Response Codes:**
+
+| Status Code | Description                                                |
+|-------------|------------------------------------------------------------|
+| `200`       | Rides seeded successfully.                               |
+| `500`       | Error occurred while seeding Rides.                      |
