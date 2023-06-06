@@ -1,6 +1,9 @@
 import smtplib
 from token_generator import TokenGenerator
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 # login to the email server
 my_email = "ezekieloluwadamy@gmail.com"
