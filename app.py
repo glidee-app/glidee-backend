@@ -23,7 +23,7 @@ CORS(app, origins=['http://localhost:3000'])
 
 
 token = Token()
-new_token = token.confirm_token()
+new_token = str(token.confirm_token())
 
 
 # home route
@@ -114,18 +114,21 @@ def forgot_password(data):
 
     # Here you would send an email to the user containing the reset token
     # I plan to update this code later by using a service like SendGrid or Mailgun to handle this
+    if reset_token is True:
+        return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
-    return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
+    else:
+        return reset_token
 
 # Reset password route
 
 
 @app.route('/reset_password', methods=['GET', 'POST'])
 @use_args({
-    'email': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
-    'token': fields.Str(required=True, error_messages={'required': 'The last_name field is required'}),
-    'new_password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
-    'confirm_password': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
+    'email': fields.Str(required=True, error_messages={'required': 'The email field is required'}),
+    'token': fields.Str(required=True, error_messages={'required': 'The token field is required'}),
+    'new_password': fields.Str(required=True, error_messages={'required': 'The new_password field is required'}),
+    'confirm_password': fields.Str(required=True, error_messages={'required': 'The confirm_password field is required'})
 }, location='json')
 def reset_password(data):
 

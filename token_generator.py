@@ -8,4 +8,4 @@ class TokenGenerator:
         
         token = secrets.randbelow(10000)
 
-        return (token)
+        return f"{token}"
