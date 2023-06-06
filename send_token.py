@@ -5,8 +5,8 @@ import os
 
 # login to the email server
 my_email = "ezekieloluwadamy@gmail.com"
-# password = os.environ.get("secret_key")
-password='owgkdkaybvfsdyks'
+password = os.environ.get("secret_key")
+
 
 tokenize=TokenGenerator()
 my_token=tokenize.generate_token()
