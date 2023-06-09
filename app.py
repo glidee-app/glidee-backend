@@ -165,7 +165,7 @@ def reset_password(data):
     return jsonify({'message': 'Password successfully changed.'}), 200
 
 # fetch rides route
-@app.get('/fetch_rides')
+@app.route('/fetch_rides', methods=['GET', 'POST'])
 @jwt_required()
 @use_args({
     'comfortability': fields.Str(validate=validate.OneOf(['standard', 'premium']), required=True, error_messages={'required': 'The comfortability field is required'}),
@@ -206,11 +206,11 @@ def fetch_rides(data):
     }), 200
 
 
-@app.post('/create_order')
+@app.route('/create_order', methods = ["GET", "POST"])
 @jwt_required()
 
 @use_args({
-    'ride_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The vehicle_id field is required'}),
+    'ride_id': fields.Int(required=True, validate=validate.Range(min=1), error_messages={'required': 'The ride_id field is required'}),
 }, location='json')
 
 def create_order(data):
@@ -265,7 +265,7 @@ def cancel_order(data):
     return jsonify({'message': 'Order cancelled successfully'}), 200
 
 
-@app.get('/order_history')
+@app.route('/order_history', methods =["GET", "POST"])
 @jwt_required()
 
 @use_args({
