@@ -33,8 +33,9 @@ def index():
     return render_template("index.html")
 
 
-# signup route for new users
-@app.route('/signup', methods=["GET", "POST"])
+# User Signup Route
+@app.post('/signup')
+
 @use_args({
     'first_name': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
     'last_name': fields.Str(required=True, error_messages={'required': 'The last_name field is required'}),
@@ -44,14 +45,13 @@ def index():
 }, location='json')
 
 def signup(data):
-
     if data['password'] != data['password_confirm']:
         return jsonify({'message': 'The passwords do not match.'}), 400
 
     user = User(
         first_name=data['first_name'],
         last_name=data['last_name'],
-        email=data['email'].lower()
+        email=data['email']
     )
     user.set_password(data['password'])
     try:
@@ -63,27 +63,27 @@ def signup(data):
 
     return jsonify({'message': f'User registered successfully.'}), 201
 
-# login route
+# User signin Route
+@app.post('/login')
 
-
-@app.route('/login', methods=["GET", "POST"])
 @use_args({
     'email': fields.Email(required=True),
     'password': fields.Str(required=True),
 }, location='json')
+
 def signin(data):
 
     user = (
         db.session
         .query(User)
-        .filter((User.email == data['email'].lower()))
+        .filter((User.email == data['email']))
         .first()
     )
     if not user or not user.check_password(data['password']):
         return jsonify({'message': 'Invalid login credentials.'}), 400
 
     try:
-        auth_token = user.generate_auth_token()
+        auth_token = user.generate_auth_token(user.id)
     except Exception:
         return jsonify({'message': 'Error occured.'}), 500
 
@@ -92,15 +92,16 @@ def signin(data):
         'data': {'token': auth_token}
     }), 200
 
-
 # Forgot email route
-@app.post('/forgot_password')
+@app.route('/forgot_password', methods=['GET','POST'])
+
 @use_args({
     'email': fields.Email(required=True, error_messages={'required': 'The email field is required'})
 }, location='json')
+
 def forgot_password(data):
 
-    email = data['email']
+    email= data['email']
 
     if not email:
         return jsonify({'message': 'Invalid login credentials.'}), 400
@@ -111,25 +112,23 @@ def forgot_password(data):
         return jsonify({'message': 'Invalid email. Please try again.'}), 400
 
     reset_token = token.send_token(email=email)
+    
 
     # Here you would send an email to the user containing the reset token
     # I plan to update this code later by using a service like SendGrid or Mailgun to handle this
-    if reset_token is True:
-        return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
-    else:
-        return reset_token
+    return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
 # Reset password route
-
-
 @app.route('/reset_password', methods=['GET', 'POST'])
+
 @use_args({
-    'email': fields.Str(required=True, error_messages={'required': 'The email field is required'}),
-    'token': fields.Str(required=True, error_messages={'required': 'The token field is required'}),
-    'new_password': fields.Str(required=True, error_messages={'required': 'The new_password field is required'}),
-    'confirm_password': fields.Str(required=True, error_messages={'required': 'The confirm_password field is required'})
+    'email': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
+    'token': fields.Str(required=True, error_messages={'required': 'The last_name field is required'}),
+    'new_password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
+    'confrim_password': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
 }, location='json')
+
 def reset_password(data):
 
     email = data['email']
@@ -159,11 +158,11 @@ def reset_password(data):
     if new_password != confirm_password:
         return jsonify({'message': 'The passwords you entered do not match. Please make sure that both passwords are the same.'}), 400
 
+
     user.set_password(new_password)
     db.session.commit()
 
     return jsonify({'message': 'Password successfully changed.'}), 200
-
 # fetch rides route
 @app.route('/fetch_rides', methods=['GET', 'POST'])
 @jwt_required()
