@@ -1,14 +1,17 @@
 # Glidee
 
+
 <p align="center">
-<img src="static/GLIDEE LOGO 1.png" alt="Glidee logo 1" width="200"/>
-<img src="static/GLIDEE LOGO 2.png" alt="Glidee logo 2" width="200"/>
-<img src="static/GLIDEE LOGO 3.png" alt="Glidee logo 3" width="200"/>
-<img src="static/GLIDEE LOGO 4.png" alt="Glidee logo 4" width="200"/>
-<img src="static/GLIDEE LOGO 5.png" alt="Glidee logo 5" width="200"/>
-<img src="static/GLIDEE LOGO 6.png" alt="Glidee logo 6" width="200"/>
-<img src="static/GLIDEE LOGO 7.png" alt="Glidee logo 7" width="200"/>
-<img src="static/GLIDEE LOGO 8.png" alt="Glidee logo 8" width="200"/>
+
+    <img src="static/GLIDEE LOGO 1.png" alt="Glidee logo 1" width="200"/>
+    <img src="static/GLIDEE LOGO 2.png" alt="Glidee logo 2" width="200"/>
+    <img src="static/GLIDEE LOGO 3.png" alt="Glidee logo 3" width="200"/>
+    <img src="static/GLIDEE LOGO 4.png" alt="Glidee logo 4" width="200"/>
+    <img src="static/GLIDEE LOGO 5.png" alt="Glidee logo 5" width="200"/>
+    <img src="static/GLIDEE LOGO 6.png" alt="Glidee logo 6" width="200"/>
+    <img src="static/GLIDEE LOGO 7.png" alt="Glidee logo 7" width="200"/>
+    <img src="static/GLIDEE LOGO 8.png" alt="Glidee logo 8" width="200"/>
+
 </p>
 
 `Glidee` is a mobility solution that addresses campus transportation issues. It provides comfortable buses with flexible payment options to take users to their desired destinations. The app's first version lets users download and `sign up`, `book a ride`, `store money in a wallet`, and `browse available bus routes` It also has additional features like `viewing upcoming`, `completed`, and `canceled trips`. Upociming features include `paying via barcode scan`, `bus tracker`, and `subscription to a monthly transport payment plan`.
