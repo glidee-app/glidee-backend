@@ -68,10 +68,9 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     ride_id = db.Column(db.Integer, db.ForeignKey('rides.id'), nullable=False)
-    # 1 represents active while 0 represents cancelled
     ride = db.relationship(
         'Ride', back_populates='orders')
-    status = db.Column(db.String(50), nullable=False, default= None)
+    status = db.Column(db.String(50), nullable=False, default=None)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -87,7 +86,7 @@ class Ride(db.Model):
     destination = db.Column(db.String(50), nullable=False)
     pickup_date = db.Column(db.Date, nullable=False)
     pickup_time = db.Column(db.String(50), nullable=False)
-    is_booked = db.Column(db.Boolean, nullable = False, default = False)
+    is_booked = db.Column(db.Boolean, nullable=False, default=False)
     available_seats = db.Column(db.Integer, nullable=False)
     orders = db.relationship(
         'Order', back_populates='ride', foreign_keys="Order.ride_id", lazy=True)
