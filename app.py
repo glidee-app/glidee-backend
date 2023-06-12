@@ -20,7 +20,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'some-secret-key')
 jwt = JWTManager(app)
 db.init_app(app)
 CORS(app, origins=['http://localhost:3000',
-     'https://glidee-frontend.vercel.app/'])
+     'https://glidee-frontend.vercel.app'])
 
 
 token = Token()
