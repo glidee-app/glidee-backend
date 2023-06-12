@@ -19,7 +19,8 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'some-secret-key')
 
 jwt = JWTManager(app)
 db.init_app(app)
-CORS(app, origins=['http://localhost:3000'])
+CORS(app, origins=['http://localhost:3000',
+     'https://glidee-frontend.vercel.app/'])
 
 
 token = Token()
@@ -62,6 +63,8 @@ def signup(data):
     return jsonify({'message': f'User registered successfully.'}), 201
 
 # User signin Route
+
+
 @app.post('/login')
 @use_args({
     'email': fields.Email(required=True),
@@ -89,8 +92,9 @@ def signin(data):
     }), 200
 
 # Forgot email route
-@app.route('/forgot_password', methods=['GET', 'POST'])
 
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
 @use_args({
     'email': fields.Email(required=True, error_messages={'required': 'The email field is required'})
 }, location='json')
@@ -114,6 +118,8 @@ def forgot_password(data):
     return jsonify({'message': 'An email containing instructions to reset your password has been sent.'}), 200
 
 # Reset password route
+
+
 @app.route('/reset_password', methods=['GET', 'POST'])
 @use_args({
     'email': fields.Str(required=True, error_messages={'required': 'The first_name field is required'}),
@@ -156,6 +162,8 @@ def reset_password(data):
     return jsonify({'message': 'Password successfully changed.'}), 200
 
 # fetch rides route
+
+
 @app.route('/fetch_rides', methods=['GET', 'POST'])
 @jwt_required()
 @use_args({
