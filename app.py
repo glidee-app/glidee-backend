@@ -43,6 +43,7 @@ def index():
     'password': fields.Str(required=True, error_messages={'required': 'The password field is required'}),
     'password_confirm': fields.Str(required=True, error_messages={'required': 'The password confirmation field is required'})
 }, location='json')
+
 def signup(data):
     if data['password'] != data['password_confirm']:
         return jsonify({'message': 'The passwords do not match.'}), 400
@@ -66,10 +67,12 @@ def signup(data):
 
 
 @app.post('/login')
+
 @use_args({
     'email': fields.Email(required=True),
     'password': fields.Str(required=True),
 }, location='json')
+
 def signin(data):
 
     user = (
@@ -167,7 +170,7 @@ def reset_password(data):
 @app.route('/fetch_rides', methods=['GET', 'POST'])
 @jwt_required()
 @use_args({
-    'comfortability': fields.Str(validate=validate.OneOf(['Standard', 'Premium']), required=True, error_messages={'required': 'The comfortability field is required'}),
+    'comfortability': fields.Str(validate=validate.OneOf(['Standard', 'Shared']), required=True, error_messages={'required': 'The comfortability field is required'}),
     'pickup_date': fields.Date(format='%Y-%m-%d', required=True, error_messages={'required': 'The pickup_datetime field is required'}),
     'pickup_location': fields.Str(required=True, error_messages={'required': 'The pickup_location field is required'}),
     'destination': fields.Str(required=True, error_messages={'required': 'The destination field is required'}),
